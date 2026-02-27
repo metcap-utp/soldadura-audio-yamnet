@@ -1,0 +1,83 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# PyCharm
+.idea/
+
+# VS Code
+.vscode/
+
+# MyPy
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# Pytest
+.pytest_cache/
+.coverage
+htmlcov/
+videos-soldadura/
+
+# Modelos entrenados
+*.keras
+*.h5
+*.pkl
+*.joblib
+*.pth
+*.onnx
+*.onnx.data
+models/
+
+# Modelos pre-entrenados
+vggish/
+
+# Datos de audio (muy pesados - no versionar)
+*.wav
+*.mp3
+*.flac
+*.ogg
+*.m4a
+
+# Logs y checkpoints
+*.log
+logs/
+checkpoints/
+
+# Sistema operativo
+.DS_Store
+Thumbs.db
+*:Zone.Identifier
+
+# Archivos temporales
+*.tmp
+*.bak
+*.swp
+*~
+
+*.out
+*.sh

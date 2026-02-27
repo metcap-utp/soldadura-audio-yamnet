@@ -1,0 +1,862 @@
+[
+  {
+    "mode": "blind_evaluation",
+    "id": "30seg_k10_overlap_0.5",
+    "model_type": "xvector",
+    "segment_duration": 30.0,
+    "overlap_ratio": 0.5,
+    "overlap_seconds": 15.0,
+    "n_samples": 113,
+    "n_models": 10,
+    "voting_method": "soft",
+    "global_metrics": {
+      "exact_match_accuracy": 0.6106194690265486,
+      "hamming_accuracy": 0.8141592920353982
+    },
+    "accuracy": {
+      "plate_thickness": 0.6460176991150443,
+      "electrode": 0.8495575221238938,
+      "current_type": 0.9469026548672567
+    },
+    "macro_f1": {
+      "plate_thickness": 0.6511684125705076,
+      "electrode": 0.8287651287651288,
+      "current_type": 0.9425813008130082
+    },
+    "classification_reports": {
+      "plate_thickness": {
+        "Placa_12mm": {
+          "precision": 0.6052631578947368,
+          "recall": 0.7666666666666667,
+          "f1-score": 0.6764705882352942,
+          "support": 30.0
+        },
+        "Placa_3mm": {
+          "precision": 0.5909090909090909,
+          "recall": 0.896551724137931,
+          "f1-score": 0.7123287671232876,
+          "support": 29.0
+        },
+        "Placa_6mm": {
+          "precision": 0.7741935483870968,
+          "recall": 0.4444444444444444,
+          "f1-score": 0.5647058823529412,
+          "support": 54.0
+        },
+        "accuracy": 0.6460176991150443,
+        "macro avg": {
+          "precision": 0.6567885990636415,
+          "recall": 0.7025542784163473,
+          "f1-score": 0.6511684125705076,
+          "support": 113.0
+        },
+        "weighted avg": {
+          "precision": 0.6823071680186634,
+          "recall": 0.6460176991150443,
+          "f1-score": 0.6322634472627698,
+          "support": 113.0
+        }
+      },
+      "electrode": {
+        "E6010": {
+          "precision": 0.631578947368421,
+          "recall": 0.8571428571428571,
+          "f1-score": 0.7272727272727273,
+          "support": 14.0
+        },
+        "E6011": {
+          "precision": 0.972972972972973,
+          "recall": 0.972972972972973,
+          "f1-score": 0.972972972972973,
+          "support": 37.0
+        },
+        "E6013": {
+          "precision": 0.7333333333333333,
+          "recall": 0.9166666666666666,
+          "f1-score": 0.8148148148148148,
+          "support": 24.0
+        },
+        "E7018": {
+          "precision": 0.9629629629629629,
+          "recall": 0.6842105263157895,
+          "f1-score": 0.8,
+          "support": 38.0
+        },
+        "accuracy": 0.8495575221238938,
+        "macro avg": {
+          "precision": 0.8252120541594226,
+          "recall": 0.8577482557745715,
+          "f1-score": 0.8287651287651288,
+          "support": 113.0
+        },
+        "weighted avg": {
+          "precision": 0.8764132553606236,
+          "recall": 0.8495575221238938,
+          "f1-score": 0.8507732189148118,
+          "support": 113.0
+        }
+      },
+      "current_type": {
+        "AC": {
+          "precision": 0.9047619047619048,
+          "recall": 0.95,
+          "f1-score": 0.926829268292683,
+          "support": 40.0
+        },
+        "DC": {
+          "precision": 0.971830985915493,
+          "recall": 0.9452054794520548,
+          "f1-score": 0.9583333333333334,
+          "support": 73.0
+        },
+        "accuracy": 0.9469026548672567,
+        "macro avg": {
+          "precision": 0.9382964453386988,
+          "recall": 0.9476027397260274,
+          "f1-score": 0.9425813008130082,
+          "support": 113.0
+        },
+        "weighted avg": {
+          "precision": 0.948089718250506,
+          "recall": 0.9469026548672567,
+          "f1-score": 0.9471814519030147,
+          "support": 113.0
+        }
+      }
+    },
+    "confusion_matrices": {
+      "plate_thickness": [
+        [
+          23,
+          2,
+          5
+        ],
+        [
+          1,
+          26,
+          2
+        ],
+        [
+          14,
+          16,
+          24
+        ]
+      ],
+      "electrode": [
+        [
+          12,
+          1,
+          0,
+          1
+        ],
+        [
+          1,
+          36,
+          0,
+          0
+        ],
+        [
+          2,
+          0,
+          22,
+          0
+        ],
+        [
+          4,
+          0,
+          8,
+          26
+        ]
+      ],
+      "current_type": [
+        [
+          38,
+          2
+        ],
+        [
+          4,
+          69
+        ]
+      ]
+    },
+    "classes": {
+      "plate_thickness": [
+        "Placa_12mm",
+        "Placa_3mm",
+        "Placa_6mm"
+      ],
+      "electrode": [
+        "E6010",
+        "E6011",
+        "E6013",
+        "E7018"
+      ],
+      "current_type": [
+        "AC",
+        "DC"
+      ]
+    },
+    "timestamp": "2026-02-26T03:58:46.564116",
+    "config": {
+      "train_seconds": 30,
+      "test_seconds": 30.0,
+      "overlap_ratio": 0.5,
+      "overlap_seconds": 15.0,
+      "k_folds": 10,
+      "model_type": "xvector",
+      "models_dir": "/home/luis/projects/yamnet-backbone/30seg/modelos/xvector/k10_overlap_0.5",
+      "train_dir": "/home/luis/projects/yamnet-backbone/30seg",
+      "test_dir": "/home/luis/projects/yamnet-backbone/30seg"
+    },
+    "execution_time": {
+      "seconds": 45.27,
+      "minutes": 0.75,
+      "hours": 0.0126
+    }
+  },
+  {
+    "mode": "blind_evaluation",
+    "id": "30seg_xvector_k10_overlap_0.5",
+    "model_type": "xvector",
+    "segment_duration": 30.0,
+    "overlap_ratio": 0.5,
+    "overlap_seconds": 15.0,
+    "n_samples": 113,
+    "n_models": 10,
+    "voting_method": "soft",
+    "global_metrics": {
+      "exact_match_accuracy": 0.6194690265486725,
+      "hamming_accuracy": 0.8171091445427728
+    },
+    "accuracy": {
+      "plate_thickness": 0.6548672566371682,
+      "electrode": 0.8407079646017699,
+      "current_type": 0.9557522123893806
+    },
+    "macro_f1": {
+      "plate_thickness": 0.6603559161698698,
+      "electrode": 0.8243966723568241,
+      "current_type": 0.9518944231587909
+    },
+    "classification_reports": {
+      "plate_thickness": {
+        "Placa_12mm": {
+          "precision": 0.6388888888888888,
+          "recall": 0.7666666666666667,
+          "f1-score": 0.696969696969697,
+          "support": 30.0
+        },
+        "Placa_3mm": {
+          "precision": 0.5777777777777777,
+          "recall": 0.896551724137931,
+          "f1-score": 0.7027027027027027,
+          "support": 29.0
+        },
+        "Placa_6mm": {
+          "precision": 0.78125,
+          "recall": 0.46296296296296297,
+          "f1-score": 0.5813953488372093,
+          "support": 54.0
+        },
+        "accuracy": 0.6548672566371682,
+        "macro avg": {
+          "precision": 0.6659722222222222,
+          "recall": 0.7087271179225202,
+          "f1-score": 0.6603559161698698,
+          "support": 113.0
+        },
+        "weighted avg": {
+          "precision": 0.6912364798426744,
+          "recall": 0.6548672566371682,
+          "f1-score": 0.6432107798644123,
+          "support": 113.0
+        }
+      },
+      "electrode": {
+        "E6010": {
+          "precision": 0.65,
+          "recall": 0.9285714285714286,
+          "f1-score": 0.7647058823529411,
+          "support": 14.0
+        },
+        "E6011": {
+          "precision": 0.972972972972973,
+          "recall": 0.972972972972973,
+          "f1-score": 0.972972972972973,
+          "support": 37.0
+        },
+        "E6013": {
+          "precision": 0.6875,
+          "recall": 0.9166666666666666,
+          "f1-score": 0.7857142857142857,
+          "support": 24.0
+        },
+        "E7018": {
+          "precision": 1.0,
+          "recall": 0.631578947368421,
+          "f1-score": 0.7741935483870968,
+          "support": 38.0
+        },
+        "accuracy": 0.8407079646017699,
+        "macro avg": {
+          "precision": 0.8276182432432433,
+          "recall": 0.8624475038948722,
+          "f1-score": 0.8243966723568241,
+          "support": 113.0
+        },
+        "weighted avg": {
+          "precision": 0.8814159292035397,
+          "recall": 0.8407079646017699,
+          "f1-score": 0.8405520358300329,
+          "support": 113.0
+        }
+      },
+      "current_type": {
+        "AC": {
+          "precision": 0.926829268292683,
+          "recall": 0.95,
+          "f1-score": 0.9382716049382716,
+          "support": 40.0
+        },
+        "DC": {
+          "precision": 0.9722222222222222,
+          "recall": 0.958904109589041,
+          "f1-score": 0.9655172413793104,
+          "support": 73.0
+        },
+        "accuracy": 0.9557522123893806,
+        "macro avg": {
+          "precision": 0.9495257452574526,
+          "recall": 0.9544520547945206,
+          "f1-score": 0.9518944231587909,
+          "support": 113.0
+        },
+        "weighted avg": {
+          "precision": 0.9561539199462791,
+          "recall": 0.9557522123893806,
+          "f1-score": 0.9558727683028364,
+          "support": 113.0
+        }
+      }
+    },
+    "confusion_matrices": {
+      "plate_thickness": [
+        [
+          23,
+          2,
+          5
+        ],
+        [
+          1,
+          26,
+          2
+        ],
+        [
+          12,
+          17,
+          25
+        ]
+      ],
+      "electrode": [
+        [
+          13,
+          1,
+          0,
+          0
+        ],
+        [
+          1,
+          36,
+          0,
+          0
+        ],
+        [
+          2,
+          0,
+          22,
+          0
+        ],
+        [
+          4,
+          0,
+          10,
+          24
+        ]
+      ],
+      "current_type": [
+        [
+          38,
+          2
+        ],
+        [
+          3,
+          70
+        ]
+      ]
+    },
+    "classes": {
+      "plate_thickness": [
+        "Placa_12mm",
+        "Placa_3mm",
+        "Placa_6mm"
+      ],
+      "electrode": [
+        "E6010",
+        "E6011",
+        "E6013",
+        "E7018"
+      ],
+      "current_type": [
+        "AC",
+        "DC"
+      ]
+    },
+    "timestamp": "2026-02-26T20:32:28.373052",
+    "config": {
+      "train_seconds": 30,
+      "test_seconds": 30.0,
+      "overlap_ratio": 0.5,
+      "overlap_seconds": 15.0,
+      "k_folds": 10,
+      "model_type": "xvector",
+      "models_dir": "/home/luis/projects/yamnet-backbone/30seg/modelos/xvector/k10_overlap_0.5",
+      "train_dir": "/home/luis/projects/yamnet-backbone/30seg",
+      "test_dir": "/home/luis/projects/yamnet-backbone/30seg"
+    },
+    "execution_time": {
+      "seconds": 40.56,
+      "minutes": 0.68,
+      "hours": 0.0113
+    }
+  },
+  {
+    "mode": "blind_evaluation",
+    "id": "30seg_ecapa_tdnn_k10_overlap_0.5",
+    "model_type": "ecapa",
+    "segment_duration": 30.0,
+    "overlap_ratio": 0.5,
+    "overlap_seconds": 15.0,
+    "n_samples": 113,
+    "n_models": 10,
+    "voting_method": "soft",
+    "global_metrics": {
+      "exact_match_accuracy": 0.6902654867256637,
+      "hamming_accuracy": 0.855457227138643
+    },
+    "accuracy": {
+      "plate_thickness": 0.7345132743362832,
+      "electrode": 0.8761061946902655,
+      "current_type": 0.9557522123893806
+    },
+    "macro_f1": {
+      "plate_thickness": 0.736562062433078,
+      "electrode": 0.8614003387916431,
+      "current_type": 0.9518944231587909
+    },
+    "classification_reports": {
+      "plate_thickness": {
+        "Placa_12mm": {
+          "precision": 0.7333333333333333,
+          "recall": 0.7333333333333333,
+          "f1-score": 0.7333333333333333,
+          "support": 30.0
+        },
+        "Placa_3mm": {
+          "precision": 0.6428571428571429,
+          "recall": 0.9310344827586207,
+          "f1-score": 0.7605633802816901,
+          "support": 29.0
+        },
+        "Placa_6mm": {
+          "precision": 0.8292682926829268,
+          "recall": 0.6296296296296297,
+          "f1-score": 0.7157894736842105,
+          "support": 54.0
+        },
+        "accuracy": 0.7345132743362832,
+        "macro avg": {
+          "precision": 0.735152922957801,
+          "recall": 0.7646658152405279,
+          "f1-score": 0.736562062433078,
+          "support": 113.0
+        },
+        "weighted avg": {
+          "precision": 0.755958804847214,
+          "recall": 0.7345132743362832,
+          "f1-score": 0.7319377841337733,
+          "support": 113.0
+        }
+      },
+      "electrode": {
+        "E6010": {
+          "precision": 0.6842105263157895,
+          "recall": 0.9285714285714286,
+          "f1-score": 0.7878787878787878,
+          "support": 14.0
+        },
+        "E6011": {
+          "precision": 0.9473684210526315,
+          "recall": 0.972972972972973,
+          "f1-score": 0.96,
+          "support": 37.0
+        },
+        "E6013": {
+          "precision": 0.84,
+          "recall": 0.875,
+          "f1-score": 0.8571428571428571,
+          "support": 24.0
+        },
+        "E7018": {
+          "precision": 0.9354838709677419,
+          "recall": 0.7631578947368421,
+          "f1-score": 0.8405797101449275,
+          "support": 38.0
+        },
+        "accuracy": 0.8761061946902655,
+        "macro avg": {
+          "precision": 0.8517657045840408,
+          "recall": 0.8849255740703109,
+          "f1-score": 0.8614003387916431,
+          "support": 113.0
+        },
+        "weighted avg": {
+          "precision": 0.8879643012755983,
+          "recall": 0.8761061946902655,
+          "f1-score": 0.87667044767468,
+          "support": 113.0
+        }
+      },
+      "current_type": {
+        "AC": {
+          "precision": 0.926829268292683,
+          "recall": 0.95,
+          "f1-score": 0.9382716049382716,
+          "support": 40.0
+        },
+        "DC": {
+          "precision": 0.9722222222222222,
+          "recall": 0.958904109589041,
+          "f1-score": 0.9655172413793104,
+          "support": 73.0
+        },
+        "accuracy": 0.9557522123893806,
+        "macro avg": {
+          "precision": 0.9495257452574526,
+          "recall": 0.9544520547945206,
+          "f1-score": 0.9518944231587909,
+          "support": 113.0
+        },
+        "weighted avg": {
+          "precision": 0.9561539199462791,
+          "recall": 0.9557522123893806,
+          "f1-score": 0.9558727683028364,
+          "support": 113.0
+        }
+      }
+    },
+    "confusion_matrices": {
+      "plate_thickness": [
+        [
+          22,
+          1,
+          7
+        ],
+        [
+          2,
+          27,
+          0
+        ],
+        [
+          6,
+          14,
+          34
+        ]
+      ],
+      "electrode": [
+        [
+          13,
+          1,
+          0,
+          0
+        ],
+        [
+          1,
+          36,
+          0,
+          0
+        ],
+        [
+          1,
+          0,
+          21,
+          2
+        ],
+        [
+          4,
+          1,
+          4,
+          29
+        ]
+      ],
+      "current_type": [
+        [
+          38,
+          2
+        ],
+        [
+          3,
+          70
+        ]
+      ]
+    },
+    "classes": {
+      "plate_thickness": [
+        "Placa_12mm",
+        "Placa_3mm",
+        "Placa_6mm"
+      ],
+      "electrode": [
+        "E6010",
+        "E6011",
+        "E6013",
+        "E7018"
+      ],
+      "current_type": [
+        "AC",
+        "DC"
+      ]
+    },
+    "timestamp": "2026-02-26T20:44:45.519111",
+    "config": {
+      "train_seconds": 30,
+      "test_seconds": 30.0,
+      "overlap_ratio": 0.5,
+      "overlap_seconds": 15.0,
+      "k_folds": 10,
+      "model_type": "ecapa",
+      "models_dir": "/home/luis/projects/yamnet-backbone/30seg/modelos/ecapa_tdnn/k10_overlap_0.5",
+      "train_dir": "/home/luis/projects/yamnet-backbone/30seg",
+      "test_dir": "/home/luis/projects/yamnet-backbone/30seg"
+    },
+    "execution_time": {
+      "seconds": 39.91,
+      "minutes": 0.67,
+      "hours": 0.0111
+    }
+  },
+  {
+    "mode": "blind_evaluation",
+    "id": "30seg_feedforward_k10_overlap_0.5",
+    "model_type": "feedforward",
+    "segment_duration": 30.0,
+    "overlap_ratio": 0.5,
+    "overlap_seconds": 15.0,
+    "n_samples": 113,
+    "n_models": 10,
+    "voting_method": "soft",
+    "global_metrics": {
+      "exact_match_accuracy": 0.6991150442477876,
+      "hamming_accuracy": 0.8495575221238938
+    },
+    "accuracy": {
+      "plate_thickness": 0.7168141592920354,
+      "electrode": 0.8938053097345132,
+      "current_type": 0.9380530973451328
+    },
+    "macro_f1": {
+      "plate_thickness": 0.7214356487275762,
+      "electrode": 0.885249766573296,
+      "current_type": 0.9340008343763038
+    },
+    "classification_reports": {
+      "plate_thickness": {
+        "Placa_12mm": {
+          "precision": 0.6764705882352942,
+          "recall": 0.7666666666666667,
+          "f1-score": 0.71875,
+          "support": 30.0
+        },
+        "Placa_3mm": {
+          "precision": 0.6666666666666666,
+          "recall": 0.896551724137931,
+          "f1-score": 0.7647058823529411,
+          "support": 29.0
+        },
+        "Placa_6mm": {
+          "precision": 0.8,
+          "recall": 0.5925925925925926,
+          "f1-score": 0.6808510638297872,
+          "support": 54.0
+        },
+        "accuracy": 0.7168141592920354,
+        "macro avg": {
+          "precision": 0.7143790849673204,
+          "recall": 0.75193699446573,
+          "f1-score": 0.7214356487275762,
+          "support": 113.0
+        },
+        "weighted avg": {
+          "precision": 0.7329862918618775,
+          "recall": 0.7168141592920354,
+          "f1-score": 0.7124329914605646,
+          "support": 113.0
+        }
+      },
+      "electrode": {
+        "E6010": {
+          "precision": 0.8571428571428571,
+          "recall": 0.8571428571428571,
+          "f1-score": 0.8571428571428571,
+          "support": 14.0
+        },
+        "E6011": {
+          "precision": 0.9473684210526315,
+          "recall": 0.972972972972973,
+          "f1-score": 0.96,
+          "support": 37.0
+        },
+        "E6013": {
+          "precision": 0.8148148148148148,
+          "recall": 0.9166666666666666,
+          "f1-score": 0.8627450980392157,
+          "support": 24.0
+        },
+        "E7018": {
+          "precision": 0.9117647058823529,
+          "recall": 0.8157894736842105,
+          "f1-score": 0.8611111111111112,
+          "support": 38.0
+        },
+        "accuracy": 0.8938053097345132,
+        "macro avg": {
+          "precision": 0.8827726997231641,
+          "recall": 0.8906429926166768,
+          "f1-score": 0.885249766573296,
+          "support": 113.0
+        },
+        "weighted avg": {
+          "precision": 0.89606412352241,
+          "recall": 0.8938053097345132,
+          "f1-score": 0.8933460581872867,
+          "support": 113.0
+        }
+      },
+      "current_type": {
+        "AC": {
+          "precision": 0.8666666666666667,
+          "recall": 0.975,
+          "f1-score": 0.9176470588235294,
+          "support": 40.0
+        },
+        "DC": {
+          "precision": 0.9852941176470589,
+          "recall": 0.9178082191780822,
+          "f1-score": 0.950354609929078,
+          "support": 73.0
+        },
+        "accuracy": 0.9380530973451328,
+        "macro avg": {
+          "precision": 0.9259803921568628,
+          "recall": 0.9464041095890411,
+          "f1-score": 0.9340008343763038,
+          "support": 113.0
+        },
+        "weighted avg": {
+          "precision": 0.9433020996009024,
+          "recall": 0.9380530973451328,
+          "f1-score": 0.9387767157324237,
+          "support": 113.0
+        }
+      }
+    },
+    "confusion_matrices": {
+      "plate_thickness": [
+        [
+          23,
+          2,
+          5
+        ],
+        [
+          0,
+          26,
+          3
+        ],
+        [
+          11,
+          11,
+          32
+        ]
+      ],
+      "electrode": [
+        [
+          12,
+          1,
+          0,
+          1
+        ],
+        [
+          0,
+          36,
+          0,
+          1
+        ],
+        [
+          1,
+          0,
+          22,
+          1
+        ],
+        [
+          1,
+          1,
+          5,
+          31
+        ]
+      ],
+      "current_type": [
+        [
+          39,
+          1
+        ],
+        [
+          6,
+          67
+        ]
+      ]
+    },
+    "classes": {
+      "plate_thickness": [
+        "Placa_12mm",
+        "Placa_3mm",
+        "Placa_6mm"
+      ],
+      "electrode": [
+        "E6010",
+        "E6011",
+        "E6013",
+        "E7018"
+      ],
+      "current_type": [
+        "AC",
+        "DC"
+      ]
+    },
+    "timestamp": "2026-02-26T20:53:05.018012",
+    "config": {
+      "train_seconds": 30,
+      "test_seconds": 30.0,
+      "overlap_ratio": 0.5,
+      "overlap_seconds": 15.0,
+      "k_folds": 10,
+      "model_type": "feedforward",
+      "models_dir": "/home/luis/projects/yamnet-backbone/30seg/modelos/feedforward/k10_overlap_0.5",
+      "train_dir": "/home/luis/projects/yamnet-backbone/30seg",
+      "test_dir": "/home/luis/projects/yamnet-backbone/30seg"
+    },
+    "execution_time": {
+      "seconds": 39.24,
+      "minutes": 0.65,
+      "hours": 0.0109
+    }
+  }
+]

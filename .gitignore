@@ -73,11 +73,8 @@ checkpoints/
 Thumbs.db
 *:Zone.Identifier
 
-# Archivos temporales
-*.tmp
-*.bak
-*.swp
-*~
-
 *.out
 *.sh
+
+# Carpeta de backups de migración
+backups/

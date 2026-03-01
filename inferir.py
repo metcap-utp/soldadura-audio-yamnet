@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 """
 Script de predicción usando Soft Voting.
 
@@ -40,11 +41,12 @@ from sklearn.preprocessing import LabelEncoder
 # Añadir carpeta raíz al path para importar modelo.py
 ROOT_DIR = Path(__file__).parent
 sys.path.insert(0, str(ROOT_DIR))
-from modelo_xvector import SMAWXVectorModel
-from modelo_ecapa import ECAPAMultiTask
-from modelo_feedforward import FeedForwardMultiTask
+from models.modelo_xvector import SMAWXVectorModel
+from models.modelo_ecapa import ECAPAMultiTask
+from models.modelo_feedforward import FeedForwardMultiTask
 from utils.audio_utils import PROJECT_ROOT, load_audio_segment
 from utils.timing import timer
+from utils.logging_utils import setup_log_file
 
 YAMNET_MODEL_URL = "https://tfhub.dev/google/yamnet/1"
 
@@ -279,21 +281,21 @@ def predict_ensemble(
     2. Promedia los logits
     3. Aplica argmax para obtener la clase predicha
     """
-    logits_espesor_list = []
-    logits_electrodo_list = []
-    logits_corriente_list = []
+    logits_plate_list = []
+    logits_electrode_list = []
+    logits_current_list = []
 
     with torch.no_grad():
         for model in ensemble_models:
             outputs = model(embeddings_tensor)
-            logits_espesor_list.append(outputs["logits_espesor"])
-            logits_electrodo_list.append(outputs["logits_electrodo"])
-            logits_corriente_list.append(outputs["logits_corriente"])
+            logits_plate_list.append(outputs["plate"])
+            logits_electrode_list.append(outputs["electrode"])
+            logits_current_list.append(outputs["current"])
 
     # Promediar logits (soft voting)
-    avg_logits_espesor = torch.stack(logits_espesor_list).mean(dim=0)
-    avg_logits_electrodo = torch.stack(logits_electrodo_list).mean(dim=0)
-    avg_logits_corriente = torch.stack(logits_corriente_list).mean(dim=0)
+    avg_logits_espesor = torch.stack(logits_plate_list).mean(dim=0)
+    avg_logits_electrodo = torch.stack(logits_electrode_list).mean(dim=0)
+    avg_logits_corriente = torch.stack(logits_current_list).mean(dim=0)
 
     # Obtener clases predichas
     pred_plate_idx = avg_logits_espesor.argmax(dim=1).item()
@@ -920,6 +922,12 @@ def predict_single_audio(ctx, audio_path):
 def main():
     args = parse_args()
 
+    # Set up logging
+    log_file, log_path = setup_log_file(
+        ROOT_DIR / "logs", "inferir", suffix=f"_{int(args.duration):02d}seg_{args.model}"
+    )
+    sys.stdout = log_file
+
     # Configuración derivada de argumentos
     SEGMENT_DURATION = float(args.duration)
     OVERLAP_RATIO = args.overlap
@@ -1017,12 +1025,18 @@ def main():
     }
 
     # Despachar acción
-    if args.audio:
-        predict_single_audio(ctx, args.audio)
-    elif args.evaluar:
-        evaluate_blind_set(ctx)
-    else:
-        show_random_predictions(ctx, n_samples=args.n)
+    try:
+        if args.audio:
+            predict_single_audio(ctx, args.audio)
+        elif args.evaluar:
+            evaluate_blind_set(ctx)
+        else:
+            show_random_predictions(ctx, n_samples=args.n)
+    finally:
+        print(f"\nResultados guardados en JSON")
+        print(f"Logs guardados en: {log_path}")
+        # Close log file
+        log_file.close()
 
 
 if __name__ == "__main__":

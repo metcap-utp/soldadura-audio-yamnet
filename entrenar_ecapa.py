@@ -11,7 +11,6 @@ import hashlib
 import json
 import pickle
 import platform
-import subprocess
 import sys
 import time
 import warnings
@@ -25,7 +24,6 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from sklearn.metrics import (
-    accuracy_score,
     classification_report,
     confusion_matrix,
     f1_score,
@@ -39,9 +37,10 @@ from torch.optim.swa_utils import SWALR, AveragedModel
 from torch.utils.data import DataLoader, Dataset
 
 sys.path.insert(0, str(Path(__file__).parent))
-from modelo_ecapa import ECAPAMultiTask
+from models.modelo_ecapa import ECAPAMultiTask
 from utils.audio_utils import PROJECT_ROOT, load_audio_segment
 from utils.timing import timer
+from utils.logging_utils import setup_log_file
 
 warnings.filterwarnings("ignore")
 
@@ -307,9 +306,9 @@ def train_one_fold(
             optimizer.zero_grad()
             outputs = model(embeddings)
 
-            loss_p = criterion_plate(outputs["logits_espesor"], labels_p)
-            loss_e = criterion_electrode(outputs["logits_electrodo"], labels_e)
-            loss_c = criterion_current(outputs["logits_corriente"], labels_c)
+            loss_p = criterion_plate(outputs["plate"], labels_p)
+            loss_e = criterion_electrode(outputs["electrode"], labels_e)
+            loss_c = criterion_current(outputs["current"], labels_c)
             loss = (loss_p + loss_e + loss_c) / 3
 
             loss.backward()
@@ -339,14 +338,14 @@ def train_one_fold(
 
                 outputs = model(embeddings)
 
-                loss_p = criterion_plate(outputs["logits_espesor"], labels_p)
-                loss_e = criterion_electrode(outputs["logits_electrodo"], labels_e)
-                loss_c = criterion_current(outputs["logits_corriente"], labels_c)
+                loss_p = criterion_plate(outputs["plate"], labels_p)
+                loss_e = criterion_electrode(outputs["electrode"], labels_e)
+                loss_c = criterion_current(outputs["current"], labels_c)
                 val_loss += (loss_p + loss_e + loss_c).item()
 
-                _, pred_p = outputs["logits_espesor"].max(1)
-                _, pred_e = outputs["logits_electrodo"].max(1)
-                _, pred_c = outputs["logits_corriente"].max(1)
+                _, pred_p = outputs["plate"].max(1)
+                _, pred_e = outputs["electrode"].max(1)
+                _, pred_c = outputs["current"].max(1)
 
                 all_preds["plate"].extend(pred_p.cpu().numpy())
                 all_preds["electrode"].extend(pred_e.cpu().numpy())
@@ -366,11 +365,11 @@ def train_one_fold(
             np.array(all_preds["current"]) == np.array(all_labels["current"])
         )
 
-        f1_p = f1_score(all_labels["plate"], all_preds["plate"], average="weighted")
+        f1_p = f1_score(all_labels["plate"], all_preds["plate"], average="macro")
         f1_e = f1_score(
-            all_labels["electrode"], all_preds["electrode"], average="weighted"
+            all_labels["electrode"], all_preds["electrode"], average="macro"
         )
-        f1_c = f1_score(all_labels["current"], all_preds["current"], average="weighted")
+        f1_c = f1_score(all_labels["current"], all_preds["current"], average="macro")
 
         training_history.append({
             "epoch": epoch + 1,
@@ -421,9 +420,9 @@ def train_one_fold(
             embeddings = embeddings.to(device)
             outputs = model(embeddings)
 
-            _, pred_p = outputs["logits_espesor"].max(1)
-            _, pred_e = outputs["logits_electrodo"].max(1)
-            _, pred_c = outputs["logits_corriente"].max(1)
+            _, pred_p = outputs["plate"].max(1)
+            _, pred_e = outputs["electrode"].max(1)
+            _, pred_c = outputs["current"].max(1)
 
             val_preds["plate"].extend(pred_p.cpu().numpy())
             val_preds["electrode"].extend(pred_e.cpu().numpy())
@@ -460,9 +459,9 @@ def ensemble_predict(models, embeddings, device):
         model.eval()
         with torch.no_grad():
             outputs = model(embeddings.to(device))
-            all_logits_plate.append(outputs["logits_espesor"])
-            all_logits_electrode.append(outputs["logits_electrodo"])
-            all_logits_current.append(outputs["logits_corriente"])
+            all_logits_plate.append(outputs["plate"])
+            all_logits_electrode.append(outputs["electrode"])
+            all_logits_current.append(outputs["current"])
 
     avg_logits_plate = torch.stack(all_logits_plate).mean(dim=0)
     avg_logits_electrode = torch.stack(all_logits_electrode).mean(dim=0)
@@ -655,6 +654,13 @@ def main():
     N_FOLDS = args.k_folds
     RANDOM_SEED = args.seed
 
+    # Set up logging
+    ROOT_DIR = Path(__file__).parent
+    log_file, log_path = setup_log_file(
+        ROOT_DIR / "logs", "entrenar_ecapa", suffix=f"_{int(SEGMENT_DURATION):02d}seg"
+    )
+    sys.stdout = log_file
+
     device = args.device or ("cuda" if torch.cuda.is_available() else "cpu")
     device = torch.device(device)
 
@@ -733,14 +739,17 @@ def main():
 
     # Si no se cargó del cache, extraer
     if all_embeddings is None:
-        all_embeddings = []
-        for i, (path, seg_idx) in enumerate(zip(paths, segment_indices)):
-            if i % 100 == 0:
-                print(f"  Procesando {i}/{len(paths)}...")
-            emb = extract_yamnet_embeddings_from_segment(
-                path, int(seg_idx), SEGMENT_DURATION, OVERLAP_SECONDS
-            )
-            all_embeddings.append(emb)
+        with timer("Extracción YAMNet") as get_extraction_time:
+            all_embeddings = []
+            for i, (path, seg_idx) in enumerate(zip(paths, segment_indices)):
+                if i % 100 == 0:
+                    print(f"  Procesando {i}/{len(paths)}...")
+                emb = extract_yamnet_embeddings_from_segment(
+                    path, int(seg_idx), SEGMENT_DURATION, OVERLAP_SECONDS
+                )
+                all_embeddings.append(emb)
+
+        yamnet_extraction_time = get_extraction_time().seconds
 
         # Guardar en cache si no se cargó de cache
         if not cache_loaded:
@@ -753,6 +762,8 @@ def main():
                 OVERLAP_RATIO,
                 OVERLAP_SECONDS,
             )
+    else:
+        yamnet_extraction_time = 0  # Se cargó desde cache
 
     print(f"Embeddings extraídos: {len(all_embeddings)}")
 
@@ -910,26 +921,26 @@ def main():
     )
     acc_c = np.mean(np.array(all_preds["current"]) == np.array(all_labels["current"]))
 
-    f1_p = f1_score(all_labels["plate"], all_preds["plate"], average="weighted")
-    f1_e = f1_score(all_labels["electrode"], all_preds["electrode"], average="weighted")
-    f1_c = f1_score(all_labels["current"], all_preds["current"], average="weighted")
+    f1_p = f1_score(all_labels["plate"], all_preds["plate"], average="macro")
+    f1_e = f1_score(all_labels["electrode"], all_preds["electrode"], average="macro")
+    f1_c = f1_score(all_labels["current"], all_preds["current"], average="macro")
 
     prec_p = precision_score(
-        all_labels["plate"], all_preds["plate"], average="weighted"
+        all_labels["plate"], all_preds["plate"], average="macro"
     )
     prec_e = precision_score(
-        all_labels["electrode"], all_preds["electrode"], average="weighted"
+        all_labels["electrode"], all_preds["electrode"], average="macro"
     )
     prec_c = precision_score(
-        all_labels["current"], all_preds["current"], average="weighted"
+        all_labels["current"], all_preds["current"], average="macro"
     )
 
-    rec_p = recall_score(all_labels["plate"], all_preds["plate"], average="weighted")
+    rec_p = recall_score(all_labels["plate"], all_preds["plate"], average="macro")
     rec_e = recall_score(
-        all_labels["electrode"], all_preds["electrode"], average="weighted"
+        all_labels["electrode"], all_preds["electrode"], average="macro"
     )
     rec_c = recall_score(
-        all_labels["current"], all_preds["current"], average="weighted"
+        all_labels["current"], all_preds["current"], average="macro"
     )
 
     avg_acc_p = np.mean([m["accuracy_plate"] for m in fold_metrics])
@@ -1031,6 +1042,7 @@ def main():
         "id": f"{int(SEGMENT_DURATION)}seg_{N_FOLDS}fold_overlap_{OVERLAP_RATIO}_ecapa_{datetime.now().strftime('%Y%m%d_%H%M%S')}",
         "timestamp": datetime.now().isoformat(),
         "model_type": "ecapa",
+        "backbone": "yamnet",
         "execution_time": {
             "seconds": round(elapsed_time, 2),
             "minutes": round(elapsed_minutes, 2),
@@ -1039,6 +1051,11 @@ def main():
         "training_time": {
             "seconds": round(training_time, 2),
             "minutes": round(training_time_minutes, 2),
+        },
+        "yamnet_extraction": {
+            "from_cache": False,
+            "extraction_time_seconds": round(yamnet_extraction_time, 2),
+            "extraction_time_minutes": round(yamnet_extraction_time / 60, 2),
         },
         "config": {
             "segment_duration": SEGMENT_DURATION,
@@ -1125,6 +1142,10 @@ def main():
     print(
         f"\nTiempo de ejecución: {elapsed_time:.2f}s ({elapsed_minutes:.2f}min / {elapsed_hours:.4f}h)"
     )
+    print(f"Logs guardados en: {log_path}")
+    
+    # Close log file
+    log_file.close()
 
 
 if __name__ == "__main__":

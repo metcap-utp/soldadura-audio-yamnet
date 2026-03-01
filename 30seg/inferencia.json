@@ -431,7 +431,7 @@
   },
   {
     "mode": "blind_evaluation",
-    "id": "30seg_ecapa_tdnn_k10_overlap_0.5",
+    "id": "30seg_ecapa_k10_overlap_0.5",
     "model_type": "ecapa",
     "segment_duration": 30.0,
     "overlap_ratio": 0.5,
@@ -634,7 +634,7 @@
       "overlap_seconds": 15.0,
       "k_folds": 10,
       "model_type": "ecapa",
-      "models_dir": "/home/luis/projects/yamnet-backbone/30seg/modelos/ecapa_tdnn/k10_overlap_0.5",
+      "models_dir": "/home/luis/projects/yamnet-backbone/30seg/modelos/ecapa/k10_overlap_0.5",
       "train_dir": "/home/luis/projects/yamnet-backbone/30seg",
       "test_dir": "/home/luis/projects/yamnet-backbone/30seg"
     },

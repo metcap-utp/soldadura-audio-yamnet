@@ -2366,7 +2366,7 @@
   },
   {
     "mode": "blind_evaluation",
-    "id": "5seg_ecapa_tdnn_k10_overlap_0.5",
+    "id": "5seg_ecapa_k10_overlap_0.5",
     "model_type": "ecapa",
     "segment_duration": 5.0,
     "overlap_ratio": 0.5,
@@ -2569,7 +2569,7 @@
       "overlap_seconds": 2.5,
       "k_folds": 10,
       "model_type": "ecapa",
-      "models_dir": "/home/luis/projects/yamnet-backbone/05seg/modelos/ecapa_tdnn/k10_overlap_0.5",
+      "models_dir": "/home/luis/projects/yamnet-backbone/05seg/modelos/ecapa/k10_overlap_0.5",
       "train_dir": "/home/luis/projects/yamnet-backbone/05seg",
       "test_dir": "/home/luis/projects/yamnet-backbone/05seg"
     },
@@ -3011,7 +3011,7 @@
   },
   {
     "mode": "blind_evaluation",
-    "id": "5seg_ecapa_tdnn_k10_overlap_0.25",
+    "id": "5seg_ecapa_k10_overlap_0.25",
     "model_type": "ecapa",
     "segment_duration": 5.0,
     "overlap_ratio": 0.25,
@@ -3214,7 +3214,7 @@
       "overlap_seconds": 1.25,
       "k_folds": 10,
       "model_type": "ecapa",
-      "models_dir": "/home/luis/projects/yamnet-backbone/05seg/modelos/ecapa_tdnn/k10_overlap_0.25",
+      "models_dir": "/home/luis/projects/yamnet-backbone/05seg/modelos/ecapa/k10_overlap_0.25",
       "train_dir": "/home/luis/projects/yamnet-backbone/05seg",
       "test_dir": "/home/luis/projects/yamnet-backbone/05seg"
     },
@@ -3656,7 +3656,7 @@
   },
   {
     "mode": "blind_evaluation",
-    "id": "5seg_ecapa_tdnn_k10_overlap_0.75",
+    "id": "5seg_ecapa_k10_overlap_0.75",
     "model_type": "ecapa",
     "segment_duration": 5.0,
     "overlap_ratio": 0.75,
@@ -3859,7 +3859,7 @@
       "overlap_seconds": 3.75,
       "k_folds": 10,
       "model_type": "ecapa",
-      "models_dir": "/home/luis/projects/yamnet-backbone/05seg/modelos/ecapa_tdnn/k10_overlap_0.75",
+      "models_dir": "/home/luis/projects/yamnet-backbone/05seg/modelos/ecapa/k10_overlap_0.75",
       "train_dir": "/home/luis/projects/yamnet-backbone/05seg",
       "test_dir": "/home/luis/projects/yamnet-backbone/05seg"
     },
@@ -4301,7 +4301,7 @@
   },
   {
     "mode": "blind_evaluation",
-    "id": "5seg_ecapa_tdnn_k03_overlap_0.5",
+    "id": "5seg_ecapa_k03_overlap_0.5",
     "model_type": "ecapa",
     "segment_duration": 5.0,
     "overlap_ratio": 0.5,
@@ -4504,7 +4504,7 @@
       "overlap_seconds": 2.5,
       "k_folds": 3,
       "model_type": "ecapa",
-      "models_dir": "/home/luis/projects/yamnet-backbone/05seg/modelos/ecapa_tdnn/k03_overlap_0.5",
+      "models_dir": "/home/luis/projects/yamnet-backbone/05seg/modelos/ecapa/k03_overlap_0.5",
       "train_dir": "/home/luis/projects/yamnet-backbone/05seg",
       "test_dir": "/home/luis/projects/yamnet-backbone/05seg"
     },
@@ -4946,7 +4946,7 @@
   },
   {
     "mode": "blind_evaluation",
-    "id": "5seg_ecapa_tdnn_k05_overlap_0.5",
+    "id": "5seg_ecapa_k05_overlap_0.5",
     "model_type": "ecapa",
     "segment_duration": 5.0,
     "overlap_ratio": 0.5,
@@ -5149,7 +5149,7 @@
       "overlap_seconds": 2.5,
       "k_folds": 5,
       "model_type": "ecapa",
-      "models_dir": "/home/luis/projects/yamnet-backbone/05seg/modelos/ecapa_tdnn/k05_overlap_0.5",
+      "models_dir": "/home/luis/projects/yamnet-backbone/05seg/modelos/ecapa/k05_overlap_0.5",
       "train_dir": "/home/luis/projects/yamnet-backbone/05seg",
       "test_dir": "/home/luis/projects/yamnet-backbone/05seg"
     },
@@ -5591,7 +5591,7 @@
   },
   {
     "mode": "blind_evaluation",
-    "id": "5seg_ecapa_tdnn_k07_overlap_0.5",
+    "id": "5seg_ecapa_k07_overlap_0.5",
     "model_type": "ecapa",
     "segment_duration": 5.0,
     "overlap_ratio": 0.5,
@@ -5794,7 +5794,7 @@
       "overlap_seconds": 2.5,
       "k_folds": 7,
       "model_type": "ecapa",
-      "models_dir": "/home/luis/projects/yamnet-backbone/05seg/modelos/ecapa_tdnn/k07_overlap_0.5",
+      "models_dir": "/home/luis/projects/yamnet-backbone/05seg/modelos/ecapa/k07_overlap_0.5",
       "train_dir": "/home/luis/projects/yamnet-backbone/05seg",
       "test_dir": "/home/luis/projects/yamnet-backbone/05seg"
     },
@@ -6236,7 +6236,7 @@
   },
   {
     "mode": "blind_evaluation",
-    "id": "5seg_ecapa_tdnn_k10_overlap_0.5",
+    "id": "5seg_ecapa_k10_overlap_0.5",
     "model_type": "ecapa",
     "segment_duration": 5.0,
     "overlap_ratio": 0.5,
@@ -6439,7 +6439,7 @@
       "overlap_seconds": 2.5,
       "k_folds": 10,
       "model_type": "ecapa",
-      "models_dir": "/home/luis/projects/yamnet-backbone/05seg/modelos/ecapa_tdnn/k10_overlap_0.5",
+      "models_dir": "/home/luis/projects/yamnet-backbone/05seg/modelos/ecapa/k10_overlap_0.5",
       "train_dir": "/home/luis/projects/yamnet-backbone/05seg",
       "test_dir": "/home/luis/projects/yamnet-backbone/05seg"
     },
@@ -6881,7 +6881,7 @@
   },
   {
     "mode": "blind_evaluation",
-    "id": "5seg_ecapa_tdnn_k15_overlap_0.5",
+    "id": "5seg_ecapa_k15_overlap_0.5",
     "model_type": "ecapa",
     "segment_duration": 5.0,
     "overlap_ratio": 0.5,
@@ -7084,7 +7084,7 @@
       "overlap_seconds": 2.5,
       "k_folds": 15,
       "model_type": "ecapa",
-      "models_dir": "/home/luis/projects/yamnet-backbone/05seg/modelos/ecapa_tdnn/k15_overlap_0.5",
+      "models_dir": "/home/luis/projects/yamnet-backbone/05seg/modelos/ecapa/k15_overlap_0.5",
       "train_dir": "/home/luis/projects/yamnet-backbone/05seg",
       "test_dir": "/home/luis/projects/yamnet-backbone/05seg"
     },
@@ -7526,7 +7526,7 @@
   },
   {
     "mode": "blind_evaluation",
-    "id": "5seg_ecapa_tdnn_k20_overlap_0.5",
+    "id": "5seg_ecapa_k20_overlap_0.5",
     "model_type": "ecapa",
     "segment_duration": 5.0,
     "overlap_ratio": 0.5,
@@ -7729,7 +7729,7 @@
       "overlap_seconds": 2.5,
       "k_folds": 20,
       "model_type": "ecapa",
-      "models_dir": "/home/luis/projects/yamnet-backbone/05seg/modelos/ecapa_tdnn/k20_overlap_0.5",
+      "models_dir": "/home/luis/projects/yamnet-backbone/05seg/modelos/ecapa/k20_overlap_0.5",
       "train_dir": "/home/luis/projects/yamnet-backbone/05seg",
       "test_dir": "/home/luis/projects/yamnet-backbone/05seg"
     },

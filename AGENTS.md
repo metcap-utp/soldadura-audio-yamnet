@@ -19,6 +19,7 @@
 Solo se puede ejecutar **una tarea a la vez** - deben ser **secuenciales**, no paralelas.
 
 Esto incluye:
+
 - `entrenar_xvector.py`, `entrenar_ecapa.py`, `entrenar_feedforward.py`
 - `inferir.py --evaluar`
 - `generar_splits.py`
@@ -87,6 +88,63 @@ ruff check *.py scripts/ utils/
 mypy modelo_ecapa.py modelo_xvector.py utils/
 ```
 
+## Archivos de Log
+
+Todos los scripts de entrenamiento e inferencia generan archivos de log automáticamente en la carpeta `logs/`.
+
+### Localización de Logs
+
+- **Entrenamiento**: `logs/entrenar_[arquitectura]_[duracion]seg_[timestamp].log`
+  - Ejemplo: `logs/entrenar_ecapa_05seg_20250228_143000.log`
+- **Inferencia**: `logs/inferir_[duracion]seg_[modelo]_[timestamp].log`
+  - Ejemplo: `logs/inferir_05seg_xvector_20250228_150000.log`
+
+### Formato de Timestamp
+
+Los archivos de log usan el formato `YYYYMMDD_HHMMSS`:
+
+- `YYYY`: Año (2025)
+- `MM`: Mes (01-12)
+- `DD`: Día (01-31)
+- `HH`: Hora (00-23)
+- `MM`: Minuto (00-59)
+- `SS`: Segundo (00-59)
+
+### Contenido de Logs
+
+Los archivos de log contienen:
+
+- Todos los prints de la ejecución del script
+- Métricas de entrenamiento (loss, accuracy por fold)
+- Tiempos de ejecución (total, por fold, extracción de YAMNet)
+- Información de backbone utilizado (vggish, yamnet, spectral-mfcc)
+- Cualquier error o warning durante la ejecución
+
+### Gestión de Logs
+
+Los archivos .log están excluidos de control de versión (`.gitignore`). Para limpiar logs antiguos:
+
+```bash
+# Eliminar todos los logs
+rm logs/*.log
+
+# Eliminar logs más viejos que 30 días
+find logs/ -name "*.log" -mtime +30 -delete
+```
+
+### Ejemplo de Lectura de Logs
+
+```bash
+# Ver último log de entrenamiento (últimas 50 líneas)
+tail -n 50 logs/entrenar_ecapa_05seg_*.log
+
+# Buscar errores en los logs
+grep -i "error\|exception" logs/*.log
+
+# Ver el log de una ejecución específica
+cat logs/entrenar_xvector_10seg_20250228_143000.log
+```
+
 ## Estructura de Salida
 
 - `{N}seg/modelos/{arquitectura}/k{K}_overlap_{ratio}/` - Modelos `.pth`
@@ -94,6 +152,22 @@ mypy modelo_ecapa.py modelo_xvector.py utils/
 - `{N}seg/inferencia.json` - Métricas de evaluación (acumulativo)
 - `{N}seg/metricas/METRICAS.md` - Documento Markdown con matrices de confusión
 - `{N}seg/embeddings_cache/yamnet_embeddings_*.pkl` - Cache de embeddings
+
+## Estructura del Proyecto
+
+- `models/` - Definiciones de modelos (modelo_xvector.py, modelo_ecapa.py, modelo_feedforward.py)
+- `logs/` - Archivos de log de entrenamiento e inferencia
+- `utils/` - Utilidades (audio_utils.py, timing.py, logging_utils.py)
+- `{N}seg/` - Datos y resultados por duración de segmento
+
+### Imports de Proyecto
+
+```python
+ROOT_DIR = Path(__file__).parent
+sys.path.insert(0, str(ROOT_DIR))
+from models.modelo_xvector import SMAWXVectorModel
+from utils.audio_utils import load_audio_segment
+```
 
 ## Notas Importantes
 

@@ -23,7 +23,6 @@ yamnet-backbone/
 ├── entrenar_todos.sh       # Script batch para entrenar todos
 ├── utils/                  # Utilidades (apunta a audio de vggish-backbone)
 ├── 01seg/...50seg/         # Datos por duración
-└── AGENTS.md               # Guía para desarrolladores
 ```
 
 ## Uso

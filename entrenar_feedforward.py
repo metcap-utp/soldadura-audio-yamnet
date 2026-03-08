@@ -42,6 +42,7 @@ from models.modelo_feedforward import FeedForwardMultiTask
 from utils.audio_utils import PROJECT_ROOT, load_audio_segment
 from utils.timing import timer
 from utils.logging_utils import setup_log_file
+from utils.checkpoint import TrainingCheckpoint, setup_pause_handler, pause_requested
 
 warnings.filterwarnings("ignore")
 
@@ -760,18 +761,49 @@ def main():
     print(f"{'=' * 70}")
 
     training_start_time = time.time()
+    
+    # Store the boundary between train and test data for k=1 case
+    n_train_rows = len(train_data)
 
-    sgkf = StratifiedGroupKFold(
-        n_splits=N_FOLDS, shuffle=True, random_state=RANDOM_SEED
-    )
-    fold_metrics = []
-    fold_best_epochs = []
-    fold_training_times = []
-    all_fold_histories = []
+    # Prepare folds: k=1 uses original train/test split, k>=2 uses StratifiedGroupKFold
+    if N_FOLDS == 1:
+        # Single train/test split without cross-validation
+        train_idx = np.arange(n_train_rows)
+        val_idx = np.arange(n_train_rows, len(all_data))
+        fold_splits = [(train_idx, val_idx)]
+    else:
+        sgkf = StratifiedGroupKFold(
+            n_splits=N_FOLDS, shuffle=True, random_state=RANDOM_SEED
+        )
+        fold_splits = list(sgkf.split(all_features, y_stratify, groups=sessions))
 
-    for fold_idx, (train_idx, val_idx) in enumerate(
-        sgkf.split(all_features, y_stratify, groups=sessions)
-    ):
+    # Checkpoint: soporte de pausa/reanudación por fold
+    setup_pause_handler()
+    ckpt = TrainingCheckpoint(MODELS_DIR)
+    ckpt_state = ckpt.load()
+
+    if ckpt_state:
+        start_fold = len(ckpt_state["completed_folds"])
+        fold_metrics = list(ckpt_state["fold_results"])
+        fold_best_epochs = list(ckpt_state["fold_best_epochs"])
+        fold_training_times = list(ckpt_state["fold_training_times"])
+        all_fold_histories = list(ckpt_state["fold_histories"])
+        _pause_count = ckpt_state.get("pause_count", 0)
+        _resumed_from_fold = start_fold
+        print(f"[RESUME] Resumiendo desde fold {start_fold + 1}/{N_FOLDS}")
+    else:
+        ckpt_state = ckpt.initialize()
+        start_fold = 0
+        fold_metrics = []
+        fold_best_epochs = []
+        fold_training_times = []
+        all_fold_histories = []
+        _pause_count = 0
+        _resumed_from_fold = None
+
+    for fold_idx, (train_idx, val_idx) in enumerate(fold_splits):
+        if fold_idx < start_fold:
+            continue
         train_sessions = set(sessions[train_idx])
         val_sessions = set(sessions[val_idx])
         assert len(train_sessions & val_sessions) == 0, "ERROR: Sesiones mezcladas!"
@@ -833,9 +865,14 @@ def main():
         fold_best_epochs.append(best_epoch)
         fold_training_times.append(round(fold_time, 2))
         all_fold_histories.append(fold_history)
+        ckpt.save_fold(ckpt_state, fold_idx, metrics, fold_time, best_epoch, fold_history)
+        if pause_requested():
+            ckpt.mark_paused(ckpt_state)
+            print(f"[PAUSE] Pausado después del fold {fold_idx + 1}/{N_FOLDS}. Re-ejecuta el mismo comando para continuar.")
+            sys.exit(0)
 
     training_end_time = time.time()
-    training_time = training_end_time - training_start_time
+    training_time = sum(fold_training_times)
     training_time_minutes = training_time / 60
     print(
         f"\nTiempo de entrenamiento puro: {training_time:.2f}s ({training_time_minutes:.2f}min)"
@@ -1017,18 +1054,17 @@ def main():
             "seconds": round(training_time, 2),
             "minutes": round(training_time_minutes, 2),
         },
-        "yamnet_extraction": {
+        "feature_extraction": {
             "from_cache": False,
             "extraction_time_seconds": round(yamnet_extraction_time, 2),
             "extraction_time_minutes": round(yamnet_extraction_time / 60, 2),
         },
         "config": {
-            "segment_duration": SEGMENT_DURATION,
-            "overlap_ratio": OVERLAP_RATIO,
-            "overlap_seconds": OVERLAP_SECONDS,
-            "n_folds": N_FOLDS,
+            "duration": SEGMENT_DURATION,
+            "overlap": OVERLAP_RATIO,
+            "k_folds": N_FOLDS,
             "models_dir": str(MODELS_DIR.name),
-            "random_seed": RANDOM_SEED,
+            "seed": RANDOM_SEED,
             "voting_method": "soft",
             "batch_size": BATCH_SIZE,
             "epochs": NUM_EPOCHS,
@@ -1085,6 +1121,11 @@ def main():
             "current": round(acc_c - avg_acc_c, 4),
         },
         "training_history": all_fold_histories,
+        "pause_resume": {
+            "was_paused": ckpt_state.get("was_paused", False),
+            "pause_count": _pause_count,
+            "resumed_from_fold": _resumed_from_fold,
+        },
     }
 
     # Cargar historial existente o crear nuevo
@@ -1101,6 +1142,8 @@ def main():
 
     with open(results_path, "w") as f:
         json.dump(history, f, indent=2)
+
+    ckpt.delete()
 
     print(f"\nResultados guardados en: {results_path} (entrada #{len(history)})")
     print(f"Modelos guardados en: {MODELS_DIR}/")

@@ -1,0 +1,110 @@
+[
+  {
+    "model_type": "xvector",
+    "config": {
+      "duration": 2,
+      "overlap": 0.5,
+      "k_folds": 10
+    },
+    "metrics": {
+      "plate": {
+        "accuracy": 0.6490872210953347,
+        "f1_macro": 0.653570248977171
+      },
+      "current": {
+        "accuracy": 0.8511156186612576,
+        "f1_macro": 0.8449904688470518
+      },
+      "electrode": {
+        "accuracy": 0.7350912778904666,
+        "f1_macro": 0.7177516241879347
+      },
+      "global": {
+        "accuracy": 0.0,
+        "f1_macro": 0.0
+      }
+    },
+    "timestamp": "2026-02-26T02:51:37.988142"
+  },
+  {
+    "model_type": "xvector",
+    "config": {
+      "duration": 2,
+      "overlap": 0.5,
+      "k_folds": 10
+    },
+    "metrics": {
+      "plate": {
+        "accuracy": 0.6393509127789047,
+        "f1_macro": 0.6458721734017426
+      },
+      "current": {
+        "accuracy": 0.8563894523326572,
+        "f1_macro": 0.8499407749199327
+      },
+      "electrode": {
+        "accuracy": 0.742393509127789,
+        "f1_macro": 0.7247135166937436
+      },
+      "global": {
+        "accuracy": 0.0,
+        "f1_macro": 0.0
+      }
+    },
+    "timestamp": "2026-02-26T16:28:22.033058"
+  },
+  {
+    "model_type": "ecapa",
+    "config": {
+      "duration": 2,
+      "overlap": 0.5,
+      "k_folds": 10
+    },
+    "metrics": {
+      "plate": {
+        "accuracy": 0.5898580121703854,
+        "f1_macro": 0.5974215649169796
+      },
+      "current": {
+        "accuracy": 0.8032454361054767,
+        "f1_macro": 0.7996547866925297
+      },
+      "electrode": {
+        "accuracy": 0.6823529411764706,
+        "f1_macro": 0.663291927335635
+      },
+      "global": {
+        "accuracy": 0.0,
+        "f1_macro": 0.0
+      }
+    },
+    "timestamp": "2026-02-26T17:09:18.588797"
+  },
+  {
+    "model_type": "feedforward",
+    "config": {
+      "duration": 2,
+      "overlap": 0.5,
+      "k_folds": 10
+    },
+    "metrics": {
+      "plate": {
+        "accuracy": 0.6219066937119675,
+        "f1_macro": 0.6295417875865835
+      },
+      "current": {
+        "accuracy": 0.8365111561866125,
+        "f1_macro": 0.8313800375976541
+      },
+      "electrode": {
+        "accuracy": 0.7070993914807302,
+        "f1_macro": 0.6831028752311049
+      },
+      "global": {
+        "accuracy": 0.0,
+        "f1_macro": 0.0
+      }
+    },
+    "timestamp": "2026-02-26T17:38:38.261347"
+  }
+]

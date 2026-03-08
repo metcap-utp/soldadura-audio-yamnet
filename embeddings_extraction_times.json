@@ -1,0 +1,72 @@
+[
+  {
+    "timestamp": "2026-03-06T13:34:53.871156",
+    "segment_duration": 50,
+    "overlap_ratio": 0.5,
+    "overlap_seconds": 25.0,
+    "num_segments": 448,
+    "num_embeddings": 448,
+    "extraction_time_seconds": 235.38,
+    "extraction_time_minutes": 3.92
+  },
+  {
+    "timestamp": "2026-03-06T13:54:06.603027",
+    "segment_duration": 30,
+    "overlap_ratio": 0.5,
+    "overlap_seconds": 15.0,
+    "num_segments": 918,
+    "num_embeddings": 918,
+    "extraction_time_seconds": 306.41,
+    "extraction_time_minutes": 5.11
+  },
+  {
+    "timestamp": "2026-03-06T14:01:22.195380",
+    "segment_duration": 20,
+    "overlap_ratio": 0.5,
+    "overlap_seconds": 10.0,
+    "num_segments": 1640,
+    "num_embeddings": 1640,
+    "extraction_time_seconds": 365.2,
+    "extraction_time_minutes": 6.09
+  },
+  {
+    "timestamp": "2026-03-06T14:09:16.705738",
+    "segment_duration": 10,
+    "overlap_ratio": 0.5,
+    "overlap_seconds": 5.0,
+    "num_segments": 3819,
+    "num_embeddings": 3819,
+    "extraction_time_seconds": 416.83,
+    "extraction_time_minutes": 6.95
+  },
+  {
+    "timestamp": "2026-03-06T14:17:37.074370",
+    "segment_duration": 5,
+    "overlap_ratio": 0.5,
+    "overlap_seconds": 2.5,
+    "num_segments": 8185,
+    "num_embeddings": 8185,
+    "extraction_time_seconds": 438.74,
+    "extraction_time_minutes": 7.31
+  },
+  {
+    "timestamp": "2026-03-06T14:26:29.950148",
+    "segment_duration": 2,
+    "overlap_ratio": 0.5,
+    "overlap_seconds": 1.0,
+    "num_segments": 21313,
+    "num_embeddings": 21313,
+    "extraction_time_seconds": 467.12,
+    "extraction_time_minutes": 7.79
+  },
+  {
+    "timestamp": "2026-03-06T14:35:04.757952",
+    "segment_duration": 1,
+    "overlap_ratio": 0.5,
+    "overlap_seconds": 0.5,
+    "num_segments": 43170,
+    "num_embeddings": 43170,
+    "extraction_time_seconds": 446.88,
+    "extraction_time_minutes": 7.45
+  }
+]

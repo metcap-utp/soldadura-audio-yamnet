@@ -1,15 +1,15 @@
 [
   {
+    "id": "2.0seg_10fold_overlap_0.5_xvector_20260228_180246",
     "timestamp": "2026-02-26T02:49:33.321110",
     "model_type": "xvector",
     "backbone": "yamnet",
     "config": {
-      "segment_duration": 2.0,
-      "overlap_ratio": 0.5,
-      "overlap_seconds": 1.0,
-      "n_folds": 10,
+      "duration": 2.0,
+      "overlap": 0.5,
+      "k_folds": 10,
+      "seed": 42,
       "models_dir": "k10_overlap_0.5",
-      "random_seed": 42,
       "voting_method": "soft",
       "batch_size": 32,
       "epochs": 100,
@@ -19,6 +19,58 @@
       "early_stop_patience": 15,
       "swa_start": 5,
       "swa_lr": 0.0001
+    },
+    "system_info": {
+      "python_version": "3.10.12",
+      "torch_version": "2.9.1+cu128",
+      "numpy_version": "2.2.6",
+      "platform": "Linux-6.6.87.2-microsoft-standard-WSL2-x86_64-with-glibc2.35",
+      "device": "cuda",
+      "tensorflow_version": "2.20.0",
+      "gpu_name": "NVIDIA GeForce RTX 3070",
+      "gpu_memory_gb": 8.59
+    },
+    "model_parameters": {
+      "total": 2168329,
+      "trainable": 2168329
+    },
+    "data": {
+      "total_segments": 18848,
+      "unique_sessions": 335,
+      "segments_per_class": {
+        "plate": {
+          "Placa_3mm": 6517,
+          "Placa_12mm": 6330,
+          "Placa_6mm": 6001
+        },
+        "electrode": {
+          "E6011": 7464,
+          "E6013": 5635,
+          "E6010": 2912,
+          "E7018": 2837
+        },
+        "current": {
+          "DC": 11232,
+          "AC": 7616
+        }
+      },
+      "classes": {
+        "plate": [
+          "Placa_12mm",
+          "Placa_3mm",
+          "Placa_6mm"
+        ],
+        "electrode": [
+          "E6010",
+          "E6011",
+          "E6013",
+          "E7018"
+        ],
+        "current": [
+          "AC",
+          "DC"
+        ]
+      }
     },
     "fold_results": [
       {
@@ -676,67 +728,15 @@
       111.59,
       141.94
     ],
-    "improvement_vs_individual": {
-      "plate": 0.1488,
-      "electrode": 0.128,
-      "current": 0.0495
-    },
     "individual_avg": {
       "plate": 0.7327,
       "electrode": 0.789,
       "current": 0.9396
     },
-    "system_info": {
-      "python_version": "3.10.12",
-      "torch_version": "2.9.1+cu128",
-      "numpy_version": "2.2.6",
-      "platform": "Linux-6.6.87.2-microsoft-standard-WSL2-x86_64-with-glibc2.35",
-      "device": "cuda",
-      "tensorflow_version": "2.20.0",
-      "gpu_name": "NVIDIA GeForce RTX 3070",
-      "gpu_memory_gb": 8.59
-    },
-    "model_parameters": {
-      "total": 2168329,
-      "trainable": 2168329
-    },
-    "data": {
-      "total_segments": 18848,
-      "unique_sessions": 335,
-      "segments_per_class": {
-        "plate": {
-          "Placa_3mm": 6517,
-          "Placa_12mm": 6330,
-          "Placa_6mm": 6001
-        },
-        "electrode": {
-          "E6011": 7464,
-          "E6013": 5635,
-          "E6010": 2912,
-          "E7018": 2837
-        },
-        "current": {
-          "DC": 11232,
-          "AC": 7616
-        }
-      },
-      "classes": {
-        "plate": [
-          "Placa_12mm",
-          "Placa_3mm",
-          "Placa_6mm"
-        ],
-        "electrode": [
-          "E6010",
-          "E6011",
-          "E6013",
-          "E7018"
-        ],
-        "current": [
-          "AC",
-          "DC"
-        ]
-      }
+    "improvement_vs_individual": {
+      "plate": 0.1488,
+      "electrode": 0.128,
+      "current": 0.0495
     },
     "training_history": [
       [
@@ -2904,20 +2904,19 @@
           "val_f1_current": 0.9600353080876305
         }
       ]
-    ],
-    "id": "2.0seg_10fold_overlap_0.5_xvector_20260228_180246"
+    ]
   },
   {
+    "id": "2.0seg_10fold_overlap_0.5_xvector_20260228_180246",
     "timestamp": "2026-02-26T16:26:25.446791",
     "model_type": "xvector",
     "backbone": "yamnet",
     "config": {
-      "segment_duration": 2.0,
-      "overlap_ratio": 0.5,
-      "overlap_seconds": 1.0,
-      "n_folds": 10,
+      "duration": 2.0,
+      "overlap": 0.5,
+      "k_folds": 10,
+      "seed": 42,
       "models_dir": "k10_overlap_0.5",
-      "random_seed": 42,
       "voting_method": "soft",
       "batch_size": 32,
       "epochs": 100,
@@ -2927,6 +2926,58 @@
       "early_stop_patience": 15,
       "swa_start": 5,
       "swa_lr": 0.0001
+    },
+    "system_info": {
+      "python_version": "3.10.12",
+      "torch_version": "2.9.1+cu128",
+      "numpy_version": "2.2.6",
+      "platform": "Linux-6.6.87.2-microsoft-standard-WSL2-x86_64-with-glibc2.35",
+      "device": "cuda",
+      "tensorflow_version": "2.20.0",
+      "gpu_name": "NVIDIA GeForce RTX 3070",
+      "gpu_memory_gb": 8.59
+    },
+    "model_parameters": {
+      "total": 2168329,
+      "trainable": 2168329
+    },
+    "data": {
+      "total_segments": 18848,
+      "unique_sessions": 335,
+      "segments_per_class": {
+        "plate": {
+          "Placa_3mm": 6517,
+          "Placa_12mm": 6330,
+          "Placa_6mm": 6001
+        },
+        "electrode": {
+          "E6011": 7464,
+          "E6013": 5635,
+          "E6010": 2912,
+          "E7018": 2837
+        },
+        "current": {
+          "DC": 11232,
+          "AC": 7616
+        }
+      },
+      "classes": {
+        "plate": [
+          "Placa_12mm",
+          "Placa_3mm",
+          "Placa_6mm"
+        ],
+        "electrode": [
+          "E6010",
+          "E6011",
+          "E6013",
+          "E7018"
+        ],
+        "current": [
+          "AC",
+          "DC"
+        ]
+      }
     },
     "fold_results": [
       {
@@ -3584,67 +3635,15 @@
       152.08,
       131.74
     ],
-    "improvement_vs_individual": {
-      "plate": 0.1632,
-      "electrode": 0.1384,
-      "current": 0.0486
-    },
     "individual_avg": {
       "plate": 0.7337,
       "electrode": 0.7916,
       "current": 0.9427
     },
-    "system_info": {
-      "python_version": "3.10.12",
-      "torch_version": "2.9.1+cu128",
-      "numpy_version": "2.2.6",
-      "platform": "Linux-6.6.87.2-microsoft-standard-WSL2-x86_64-with-glibc2.35",
-      "device": "cuda",
-      "tensorflow_version": "2.20.0",
-      "gpu_name": "NVIDIA GeForce RTX 3070",
-      "gpu_memory_gb": 8.59
-    },
-    "model_parameters": {
-      "total": 2168329,
-      "trainable": 2168329
-    },
-    "data": {
-      "total_segments": 18848,
-      "unique_sessions": 335,
-      "segments_per_class": {
-        "plate": {
-          "Placa_3mm": 6517,
-          "Placa_12mm": 6330,
-          "Placa_6mm": 6001
-        },
-        "electrode": {
-          "E6011": 7464,
-          "E6013": 5635,
-          "E6010": 2912,
-          "E7018": 2837
-        },
-        "current": {
-          "DC": 11232,
-          "AC": 7616
-        }
-      },
-      "classes": {
-        "plate": [
-          "Placa_12mm",
-          "Placa_3mm",
-          "Placa_6mm"
-        ],
-        "electrode": [
-          "E6010",
-          "E6011",
-          "E6013",
-          "E7018"
-        ],
-        "current": [
-          "AC",
-          "DC"
-        ]
-      }
+    "improvement_vs_individual": {
+      "plate": 0.1632,
+      "electrode": 0.1384,
+      "current": 0.0486
     },
     "training_history": [
       [
@@ -5889,20 +5888,19 @@
           "val_f1_current": 0.9603092901768923
         }
       ]
-    ],
-    "id": "2.0seg_10fold_overlap_0.5_xvector_20260228_180246"
+    ]
   },
   {
+    "id": "2.0seg_10fold_overlap_0.5_ecapa_20260228_180246",
     "timestamp": "2026-02-26T17:06:26.166359",
     "model_type": "ecapa",
     "backbone": "yamnet",
     "config": {
-      "segment_duration": 2.0,
-      "overlap_ratio": 0.5,
-      "overlap_seconds": 1.0,
-      "n_folds": 10,
+      "duration": 2.0,
+      "overlap": 0.5,
+      "k_folds": 10,
+      "seed": 42,
       "models_dir": "k10_overlap_0.5",
-      "random_seed": 42,
       "voting_method": "soft",
       "batch_size": 32,
       "epochs": 100,
@@ -5912,6 +5910,58 @@
       "early_stop_patience": 15,
       "swa_start": 5,
       "swa_lr": 0.0001
+    },
+    "system_info": {
+      "python_version": "3.10.12",
+      "torch_version": "2.9.1+cu128",
+      "numpy_version": "2.2.6",
+      "platform": "Linux-6.6.87.2-microsoft-standard-WSL2-x86_64-with-glibc2.35",
+      "device": "cuda",
+      "tensorflow_version": "2.20.0",
+      "gpu_name": "NVIDIA GeForce RTX 3070",
+      "gpu_memory_gb": 8.59
+    },
+    "model_parameters": {
+      "total": 14314505,
+      "trainable": 14314505
+    },
+    "data": {
+      "total_segments": 18848,
+      "unique_sessions": 335,
+      "segments_per_class": {
+        "plate": {
+          "Placa_3mm": 6517,
+          "Placa_12mm": 6330,
+          "Placa_6mm": 6001
+        },
+        "electrode": {
+          "E6011": 7464,
+          "E6013": 5635,
+          "E6010": 2912,
+          "E7018": 2837
+        },
+        "current": {
+          "DC": 11232,
+          "AC": 7616
+        }
+      },
+      "classes": {
+        "plate": [
+          "Placa_12mm",
+          "Placa_3mm",
+          "Placa_6mm"
+        ],
+        "electrode": [
+          "E6010",
+          "E6011",
+          "E6013",
+          "E7018"
+        ],
+        "current": [
+          "AC",
+          "DC"
+        ]
+      }
     },
     "fold_results": [
       {
@@ -6569,67 +6619,15 @@
       180.43,
       183.95
     ],
-    "improvement_vs_individual": {
-      "plate": 0.1897,
-      "electrode": 0.1849,
-      "current": 0.1319
-    },
     "individual_avg": {
       "plate": 0.6379,
       "electrode": 0.6869,
       "current": 0.8437
     },
-    "system_info": {
-      "python_version": "3.10.12",
-      "torch_version": "2.9.1+cu128",
-      "numpy_version": "2.2.6",
-      "platform": "Linux-6.6.87.2-microsoft-standard-WSL2-x86_64-with-glibc2.35",
-      "device": "cuda",
-      "tensorflow_version": "2.20.0",
-      "gpu_name": "NVIDIA GeForce RTX 3070",
-      "gpu_memory_gb": 8.59
-    },
-    "model_parameters": {
-      "total": 14314505,
-      "trainable": 14314505
-    },
-    "data": {
-      "total_segments": 18848,
-      "unique_sessions": 335,
-      "segments_per_class": {
-        "plate": {
-          "Placa_3mm": 6517,
-          "Placa_12mm": 6330,
-          "Placa_6mm": 6001
-        },
-        "electrode": {
-          "E6011": 7464,
-          "E6013": 5635,
-          "E6010": 2912,
-          "E7018": 2837
-        },
-        "current": {
-          "DC": 11232,
-          "AC": 7616
-        }
-      },
-      "classes": {
-        "plate": [
-          "Placa_12mm",
-          "Placa_3mm",
-          "Placa_6mm"
-        ],
-        "electrode": [
-          "E6010",
-          "E6011",
-          "E6013",
-          "E7018"
-        ],
-        "current": [
-          "AC",
-          "DC"
-        ]
-      }
+    "improvement_vs_individual": {
+      "plate": 0.1897,
+      "electrode": 0.1849,
+      "current": 0.1319
     },
     "training_history": [
       [
@@ -8489,20 +8487,19 @@
           "val_f1_current": 0.9604374442298632
         }
       ]
-    ],
-    "id": "2.0seg_10fold_overlap_0.5_ecapa_20260228_180246"
+    ]
   },
   {
+    "id": "2.0seg_10fold_overlap_0.5_feedforward_20260228_180246",
     "timestamp": "2026-02-26T17:36:47.071657",
     "model_type": "feedforward",
     "backbone": "yamnet",
     "config": {
-      "segment_duration": 2.0,
-      "overlap_ratio": 0.5,
-      "overlap_seconds": 1.0,
-      "n_folds": 10,
+      "duration": 2.0,
+      "overlap": 0.5,
+      "k_folds": 10,
+      "seed": 42,
       "models_dir": "k10_overlap_0.5",
-      "random_seed": 42,
       "voting_method": "soft",
       "batch_size": 32,
       "epochs": 100,
@@ -8512,6 +8509,58 @@
       "early_stop_patience": 15,
       "swa_start": 5,
       "swa_lr": 0.0001
+    },
+    "system_info": {
+      "python_version": "3.10.12",
+      "torch_version": "2.9.1+cu128",
+      "numpy_version": "2.2.6",
+      "platform": "Linux-6.6.87.2-microsoft-standard-WSL2-x86_64-with-glibc2.35",
+      "device": "cuda",
+      "tensorflow_version": "2.20.0",
+      "gpu_name": "NVIDIA GeForce RTX 3070",
+      "gpu_memory_gb": 8.59
+    },
+    "model_parameters": {
+      "total": 2760201,
+      "trainable": 2760201
+    },
+    "data": {
+      "total_segments": 18848,
+      "unique_sessions": 335,
+      "segments_per_class": {
+        "plate": {
+          "Placa_3mm": 6517,
+          "Placa_12mm": 6330,
+          "Placa_6mm": 6001
+        },
+        "electrode": {
+          "E6011": 7464,
+          "E6013": 5635,
+          "E6010": 2912,
+          "E7018": 2837
+        },
+        "current": {
+          "DC": 11232,
+          "AC": 7616
+        }
+      },
+      "classes": {
+        "plate": [
+          "Placa_12mm",
+          "Placa_3mm",
+          "Placa_6mm"
+        ],
+        "electrode": [
+          "E6010",
+          "E6011",
+          "E6013",
+          "E7018"
+        ],
+        "current": [
+          "AC",
+          "DC"
+        ]
+      }
     },
     "fold_results": [
       {
@@ -9169,67 +9218,15 @@
       123.98,
       122.44
     ],
-    "improvement_vs_individual": {
-      "plate": 0.1427,
-      "electrode": 0.1179,
-      "current": 0.0364
-    },
     "individual_avg": {
       "plate": 0.7495,
       "electrode": 0.8091,
       "current": 0.9494
     },
-    "system_info": {
-      "python_version": "3.10.12",
-      "torch_version": "2.9.1+cu128",
-      "numpy_version": "2.2.6",
-      "platform": "Linux-6.6.87.2-microsoft-standard-WSL2-x86_64-with-glibc2.35",
-      "device": "cuda",
-      "tensorflow_version": "2.20.0",
-      "gpu_name": "NVIDIA GeForce RTX 3070",
-      "gpu_memory_gb": 8.59
-    },
-    "model_parameters": {
-      "total": 2760201,
-      "trainable": 2760201
-    },
-    "data": {
-      "total_segments": 18848,
-      "unique_sessions": 335,
-      "segments_per_class": {
-        "plate": {
-          "Placa_3mm": 6517,
-          "Placa_12mm": 6330,
-          "Placa_6mm": 6001
-        },
-        "electrode": {
-          "E6011": 7464,
-          "E6013": 5635,
-          "E6010": 2912,
-          "E7018": 2837
-        },
-        "current": {
-          "DC": 11232,
-          "AC": 7616
-        }
-      },
-      "classes": {
-        "plate": [
-          "Placa_12mm",
-          "Placa_3mm",
-          "Placa_6mm"
-        ],
-        "electrode": [
-          "E6010",
-          "E6011",
-          "E6013",
-          "E7018"
-        ],
-        "current": [
-          "AC",
-          "DC"
-        ]
-      }
+    "improvement_vs_individual": {
+      "plate": 0.1427,
+      "electrode": 0.1179,
+      "current": 0.0364
     },
     "training_history": [
       [
@@ -11782,7 +11779,6 @@
           "val_f1_current": 0.9672181452410765
         }
       ]
-    ],
-    "id": "2.0seg_10fold_overlap_0.5_feedforward_20260228_180246"
+    ]
   }
 ]

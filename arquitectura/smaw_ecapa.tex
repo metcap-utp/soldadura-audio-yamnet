@@ -1,0 +1,151 @@
+
+\documentclass[border=8pt, multi, tikz]{standalone} 
+\usepackage{import}
+\subimport{/home/luis/PlotNeuralNet/layers/}{init}
+\usetikzlibrary{positioning}
+\usetikzlibrary{3d} %for including external image 
+
+\def\ConvColor{rgb:yellow,5;red,2.5;white,5}
+\def\ConvReluColor{rgb:yellow,5;red,5;white,5}
+\def\PoolColor{rgb:red,1;black,0.3}
+\def\UnpoolColor{rgb:blue,2;green,1;black,0.3}
+\def\FcColor{rgb:blue,5;red,2.5;white,5}
+\def\FcReluColor{rgb:blue,5;red,5;white,4}
+\def\SoftmaxColor{rgb:magenta,5;black,7}   
+\def\SumColor{rgb:blue,5;green,15}
+
+\newcommand{\copymidarrow}{\tikz \draw[-Stealth,line width=0.8mm,draw={rgb:blue,4;red,1;green,1;black,3}] (-0.3,0) -- ++(0.3,0);}
+
+\begin{document}
+\begin{tikzpicture}
+\tikzstyle{connection}=[ultra thick,every node/.style={sloped,allow upside down},draw=\edgecolor,opacity=0.7]
+\tikzstyle{copyconnection}=[ultra thick,every node/.style={sloped,allow upside down},draw={rgb:blue,4;red,1;green,1;black,3},opacity=0.7]
+\pic[shift={(0,0,0)}] at (0,0,0)
+    {Box={
+        name=yamnet,
+        caption={\parbox{2.4cm}{\centering\small\textbf{YAMNet}\\\footnotesize 1$\times$1$\times$1024}},
+        fill=\ConvColor,
+        height=40,
+        width=3,
+        depth=40
+        }
+    };
+\pic[shift={(2.5,0,0)}] at (yamnet-east) 
+    {Box={
+        name=bn_input,
+        caption={\parbox{2.0cm}{\centering\small\textbf{BatchNorm}\\\footnotesize 1024}},
+        fill=\FcColor,
+        height=32,
+        width=2.2,
+        depth=32
+        }
+    };
+
+\draw [connection]  (yamnet-east)    -- node {\midarrow} (bn_input-west);
+
+\pic[shift={(2.5,0,0)}] at (bn_input-east) 
+    {RightBandedBox={
+        name=resblock1,
+        caption={\parbox{2.8cm}{\centering\small\textbf{ResBlock-1}\\\footnotesize 1024$\times$1024$\times$5\\\footnotesize SE}},
+        fill=\ConvColor,
+        bandfill=\ConvReluColor,
+        height=38,
+        width=3,
+        depth=38
+        }
+    };
+
+\draw [connection]  (bn_input-east)    -- node {\midarrow} (resblock1-west);
+
+\pic[shift={(2.5,0,0)}] at (resblock1-east) 
+    {RightBandedBox={
+        name=resblock2,
+        caption={\parbox{2.8cm}{\centering\small\textbf{ResBlock-2}\\\footnotesize 1024$\times$1024$\times$3\\\footnotesize SE}},
+        fill=\ConvColor,
+        bandfill=\ConvReluColor,
+        height=36,
+        width=3,
+        depth=36
+        }
+    };
+
+\draw [connection]  (resblock1-east)    -- node {\midarrow} (resblock2-west);
+
+\pic[shift={(2.5,0,0)}] at (resblock2-east) 
+    {RightBandedBox={
+        name=resblock3,
+        caption={\parbox{2.8cm}{\centering\small\textbf{ResBlock-3}\\\footnotesize 1024$\times$1024$\times$1\\\footnotesize SE}},
+        fill=\ConvColor,
+        bandfill=\ConvReluColor,
+        height=34,
+        width=2.8,
+        depth=34
+        }
+    };
+
+\draw [connection]  (resblock2-east)    -- node {\midarrow} (resblock3-west);
+
+\pic[shift={(2.8,0,0)}] at (resblock3-east) 
+    {Box={
+        name=asp,
+        caption={\parbox{2.8cm}{\centering\small\textbf{ASP}\\\footnotesize Attentive Stats\\\footnotesize 2048}},
+        fill=\PoolColor,
+        height=32,
+        width=3,
+        depth=32
+        }
+    };
+
+\draw [connection]  (resblock3-east)    -- node {\midarrow} (asp-west);
+
+\pic[shift={(2.5,0,0)}] at (asp-east) 
+    {Box={
+        name=fc_embedding,
+        caption={\parbox{2.4cm}{\centering\small\textbf{FC + ReLU}\\\footnotesize 2048$\times$256}},
+        fill=\FcColor,
+        height=22,
+        width=2.5,
+        depth=22
+        }
+    };
+
+\draw [connection]  (asp-east)    -- node {\midarrow} (fc_embedding-west);
+
+\pic[shift={(4.0,4.5,0)}] at (fc_embedding-east) 
+    {Box={
+        name=head_espesor,
+        caption={\parbox{2.4cm}{\centering\small\textbf{Espesor}\\\footnotesize 256$\times$3}},
+        fill=\SoftmaxColor,
+        opacity=0.9,
+        height=10,
+        width=2.8,
+        depth=10
+        }
+    };
+
+\pic[shift={(4.0,0,0)}] at (fc_embedding-east) 
+    {Box={
+        name=head_electrodo,
+        caption={\parbox{2.4cm}{\centering\small\textbf{Electrodo}\\\footnotesize 256$\times$4}},
+        fill=\SoftmaxColor,
+        opacity=0.9,
+        height=12,
+        width=2.8,
+        depth=12
+        }
+    };
+
+\pic[shift={(4.0,-4.5,0)}] at (fc_embedding-east) 
+    {Box={
+        name=head_corriente,
+        caption={\parbox{2.4cm}{\centering\small\textbf{Corriente}\\\footnotesize 256$\times$2}},
+        fill=\SoftmaxColor,
+        opacity=0.9,
+        height=8,
+        width=2.8,
+        depth=8
+        }
+    };
+\draw [connection]  (fc_embedding-east) -- node {\midarrow} (head_espesor-west);\draw [connection]  (fc_embedding-east) -- node {\midarrow} (head_electrodo-west);\draw [connection]  (fc_embedding-east) -- node {\midarrow} (head_corriente-west);
+\end{tikzpicture}
+\end{document}

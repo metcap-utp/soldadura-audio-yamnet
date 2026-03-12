@@ -78,3 +78,4 @@ Thumbs.db
 
 # Carpeta de backups de migración
 backups/
+*.aux

@@ -1,0 +1,125 @@
+
+\documentclass[border=8pt, multi, tikz]{standalone} 
+\usepackage{import}
+\subimport{/home/luis/PlotNeuralNet/layers/}{init}
+\usetikzlibrary{positioning}
+\usetikzlibrary{3d} %for including external image 
+
+\def\ConvColor{rgb:yellow,5;red,2.5;white,5}
+\def\ConvReluColor{rgb:yellow,5;red,5;white,5}
+\def\PoolColor{rgb:red,1;black,0.3}
+\def\UnpoolColor{rgb:blue,2;green,1;black,0.3}
+\def\FcColor{rgb:blue,5;red,2.5;white,5}
+\def\FcReluColor{rgb:blue,5;red,5;white,4}
+\def\SoftmaxColor{rgb:magenta,5;black,7}   
+\def\SumColor{rgb:blue,5;green,15}
+
+\newcommand{\copymidarrow}{\tikz \draw[-Stealth,line width=0.8mm,draw={rgb:blue,4;red,1;green,1;black,3}] (-0.3,0) -- ++(0.3,0);}
+
+\begin{document}
+\begin{tikzpicture}
+\tikzstyle{connection}=[ultra thick,every node/.style={sloped,allow upside down},draw=\edgecolor,opacity=0.7]
+\tikzstyle{copyconnection}=[ultra thick,every node/.style={sloped,allow upside down},draw={rgb:blue,4;red,1;green,1;black,3},opacity=0.7]
+\pic[shift={(0,0,0)}] at (0,0,0)
+    {Box={
+        name=yamnet,
+        caption={\parbox{2.4cm}{\centering\small\textbf{YAMNet}\\\footnotesize 1$\times$1$\times$1024}},
+        fill=\ConvColor,
+        height=40,
+        width=3,
+        depth=40
+        }
+    };
+\pic[shift={(2.5,0,0)}] at (yamnet-east) 
+    {Box={
+        name=aggregator,
+        caption={\parbox{2.4cm}{\centering\small\textbf{Aggregator}\\\footnotesize mean + std\\\footnotesize 1$\times$2048}},
+        fill=\PoolColor,
+        height=32,
+        width=3,
+        depth=32
+        }
+    };
+
+\draw [connection]  (yamnet-east)    -- node {\midarrow} (aggregator-west);
+
+\pic[shift={(2.5,0,0)}] at (aggregator-east) 
+    {RightBandedBox={
+        name=fc1,
+        caption={\parbox{2.8cm}{\centering\small\textbf{FC-1}\\\footnotesize 2048$\times$1024\\\footnotesize BN+ReLU+Drop}},
+        fill=\FcColor,
+        bandfill=\FcReluColor,
+        height=36,
+        width=3.2,
+        depth=36
+        }
+    };
+
+\draw [connection]  (aggregator-east)    -- node {\midarrow} (fc1-west);
+
+\pic[shift={(2.5,0,0)}] at (fc1-east) 
+    {RightBandedBox={
+        name=fc2,
+        caption={\parbox{2.8cm}{\centering\small\textbf{FC-2}\\\footnotesize 1024$\times$512\\\footnotesize BN+ReLU+Drop}},
+        fill=\FcColor,
+        bandfill=\FcReluColor,
+        height=32,
+        width=2.8,
+        depth=32
+        }
+    };
+
+\draw [connection]  (fc1-east)    -- node {\midarrow} (fc2-west);
+
+\pic[shift={(2.5,0,0)}] at (fc2-east) 
+    {RightBandedBox={
+        name=fc3,
+        caption={\parbox{2.8cm}{\centering\small\textbf{FC-3}\\\footnotesize 512$\times$256\\\footnotesize BN+ReLU+Drop}},
+        fill=\FcColor,
+        bandfill=\FcReluColor,
+        height=28,
+        width=2.5,
+        depth=28
+        }
+    };
+
+\draw [connection]  (fc2-east)    -- node {\midarrow} (fc3-west);
+
+\pic[shift={(4.0,4.5,0)}] at (fc3-east) 
+    {Box={
+        name=head_espesor,
+        caption={\parbox{2.4cm}{\centering\small\textbf{Espesor}\\\footnotesize 256$\times$3}},
+        fill=\SoftmaxColor,
+        opacity=0.9,
+        height=10,
+        width=2.8,
+        depth=10
+        }
+    };
+
+\pic[shift={(4.0,0,0)}] at (fc3-east) 
+    {Box={
+        name=head_electrodo,
+        caption={\parbox{2.4cm}{\centering\small\textbf{Electrodo}\\\footnotesize 256$\times$4}},
+        fill=\SoftmaxColor,
+        opacity=0.9,
+        height=12,
+        width=2.8,
+        depth=12
+        }
+    };
+
+\pic[shift={(4.0,-4.5,0)}] at (fc3-east) 
+    {Box={
+        name=head_corriente,
+        caption={\parbox{2.4cm}{\centering\small\textbf{Corriente}\\\footnotesize 256$\times$2}},
+        fill=\SoftmaxColor,
+        opacity=0.9,
+        height=8,
+        width=2.8,
+        depth=8
+        }
+    };
+\draw [connection]  (fc3-east) -- node {\midarrow} (head_espesor-west);\draw [connection]  (fc3-east) -- node {\midarrow} (head_electrodo-west);\draw [connection]  (fc3-east) -- node {\midarrow} (head_corriente-west);
+\end{tikzpicture}
+\end{document}

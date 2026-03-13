@@ -2,7 +2,7 @@
   {
     "timestamp": "2026-02-26T04:06:22.973026",
     "model_type": "xvector",
-    "backbone": "yamnet",
+    "approach": "yamnet",
     "config": {
       "segment_duration": 50.0,
       "overlap_ratio": 0.5,
@@ -9158,7 +9158,7 @@
   {
     "timestamp": "2026-02-26T21:00:10.666975",
     "model_type": "xvector",
-    "backbone": "yamnet",
+    "approach": "yamnet",
     "config": {
       "segment_duration": 50.0,
       "overlap_ratio": 0.5,
@@ -18237,7 +18237,7 @@
   {
     "timestamp": "2026-02-26T21:09:54.367359",
     "model_type": "ecapa",
-    "backbone": "yamnet",
+    "approach": "yamnet",
     "config": {
       "segment_duration": 50.0,
       "overlap_ratio": 0.5,
@@ -25424,7 +25424,7 @@
   {
     "timestamp": "2026-02-26T21:16:23.677278",
     "model_type": "feedforward",
-    "backbone": "yamnet",
+    "approach": "yamnet",
     "config": {
       "segment_duration": 50.0,
       "overlap_ratio": 0.5,

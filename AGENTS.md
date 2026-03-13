@@ -7,7 +7,7 @@
 **Framework**: PyTorch + Librosa + Scikit-learn + TensorFlow Hub (YAMNet)  
 **Idioma**: Español (código y documentación)
 
-## Diferencias con VGGish Backbone
+## Diferencias con VGGish Approach
 
 - **Embedding dimensions**: YAMNet produce 1024 dimensiones (vs 128 de VGGish)
 - **Modelo**: YAMNet usa una arquitectura diferente, embeddings de la capa interna
@@ -117,7 +117,7 @@ Los archivos de log contienen:
 - Todos los prints de la ejecución del script
 - Métricas de entrenamiento (loss, accuracy por fold)
 - Tiempos de ejecución (total, por fold, extracción de YAMNet)
-- Información de backbone utilizado (vggish, yamnet, spectral-mfcc)
+- Información de enfoque utilizado (vggish, yamnet, spectral-mfcc)
 - Cualquier error o warning durante la ejecución
 
 ### Gestión de Logs

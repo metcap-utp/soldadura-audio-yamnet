@@ -21,7 +21,7 @@ def migrate_yamnet_result(old_entry):
     new_entry = {
         "timestamp": old_entry.get("timestamp", datetime.now().isoformat()),
         "model_type": old_entry.get("model_type", "unknown"),
-        "backbone": "yamnet",
+        "approach": "yamnet",
     }
     
     # Mapear configuración

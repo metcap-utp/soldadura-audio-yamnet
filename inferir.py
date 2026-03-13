@@ -8,7 +8,7 @@ promediando logits antes de aplicar argmax (soft voting).
 Los audios se segmentan ON-THE-FLY según la duración especificada
 (--duration) - NO hay archivos segmentados en disco.
 
-Utiliza YAMNet como backbone para extraer embeddings de audio.
+Utiliza YAMNet como enfoque para extraer embeddings de audio.
 
 Uso:
     python inferir.py --duration 5                    # Predicciones aleatorias (05seg, overlap 0.5)

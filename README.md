@@ -1,8 +1,8 @@
-# YAMNet Backbone - Clasificación de Audio SMAW
+# YAMNet Approach - Clasificación de Audio SMAW
 
-Este proyecto utiliza **YAMNet** como backbone para extraer embeddings de audio de soldadura SMAW.
+Este proyecto utiliza **YAMNet** como approach para extraer embeddings de audio de soldadura SMAW.
 
-## Diferencias con VGGish Backbone
+## Diferencias con VGGish Approach
 
 | Característica | VGGish | YAMNet |
 |---------------|--------|--------|

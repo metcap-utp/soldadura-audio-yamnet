@@ -68,7 +68,7 @@ def create_result_entry(
     n_folds,
     overlap_ratio,
     model_type,
-    backbone,
+    approach,
     config,
     system_info,
     model_params,
@@ -90,7 +90,7 @@ def create_result_entry(
         n_folds: Número de folds
         overlap_ratio: Ratio de overlap
         model_type: Tipo de modelo (ecapa, xvector, feedforward)
-        backbone: Tipo de embedding (vggish, yamnet, spectral-mfcc)
+        approach: Tipo de enfoque de embeddings (vggish, yamnet, spectral-mfcc)
         config: Diccionario con configuración
         system_info: Información del sistema
         model_params: Parámetros del modelo
@@ -112,7 +112,7 @@ def create_result_entry(
         "id": f"{int(segment_duration)}seg_{n_folds}fold_overlap_{overlap_ratio}_{model_type}_{datetime.now().strftime('%Y%m%d_%H%M%S')}",
         "timestamp": datetime.now().isoformat(),
         "model_type": model_type,
-        "backbone": backbone,
+        "approach": approach,
         "execution_time": execution_time,
         "training_time": training_time,
         "config": config,

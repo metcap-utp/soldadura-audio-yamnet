@@ -3,7 +3,7 @@
     "id": "10.0seg_10fold_overlap_0.5_xvector_20260228_180246",
     "timestamp": "2026-02-26T03:33:04.928408",
     "model_type": "xvector",
-    "backbone": "yamnet",
+    "approach": "yamnet",
     "config": {
       "duration": 10.0,
       "overlap": 0.5,
@@ -5583,7 +5583,7 @@
     "id": "10.0seg_10fold_overlap_0.5_xvector_20260228_180246",
     "timestamp": "2026-02-26T19:06:36.749705",
     "model_type": "xvector",
-    "backbone": "yamnet",
+    "approach": "yamnet",
     "config": {
       "duration": 10.0,
       "overlap": 0.5,
@@ -9799,7 +9799,7 @@
     "id": "10.0seg_10fold_overlap_0.5_ecapa_20260228_180246",
     "timestamp": "2026-02-26T19:28:25.541151",
     "model_type": "ecapa",
-    "backbone": "yamnet",
+    "approach": "yamnet",
     "config": {
       "duration": 10.0,
       "overlap": 0.5,
@@ -15115,7 +15115,7 @@
     "id": "10.0seg_10fold_overlap_0.5_feedforward_20260228_180246",
     "timestamp": "2026-02-26T19:42:10.440182",
     "model_type": "feedforward",
-    "backbone": "yamnet",
+    "approach": "yamnet",
     "config": {
       "duration": 10.0,
       "overlap": 0.5,

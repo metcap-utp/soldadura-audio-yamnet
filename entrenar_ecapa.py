@@ -1079,7 +1079,7 @@ def main():
         "id": f"{int(SEGMENT_DURATION)}seg_{N_FOLDS}fold_overlap_{OVERLAP_RATIO}_ecapa_{datetime.now().strftime('%Y%m%d_%H%M%S')}",
         "timestamp": datetime.now().isoformat(),
         "model_type": "ecapa",
-        "backbone": "yamnet",
+        "approach": "yamnet",
         "execution_time": {
             "seconds": round(elapsed_time, 2),
             "minutes": round(elapsed_minutes, 2),

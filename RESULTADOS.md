@@ -1,6 +1,6 @@
 # YAMNet — Resultados (Blind Set)
 
-**Backbone:** YAMNet (embeddings pre-entrenados)  
+**Enfoque:** YAMNet (embeddings pre-entrenados)  
 **Configuración:** k-fold = 10, overlap = 0.5  
 **Datos:** `inferencia.json` (conjunto ciego)
 
@@ -147,6 +147,19 @@ Tiempo de entrenamiento por arquitectura para Study 2 (duración fija 5 s), usan
 | 20  |   1440.59    |    2957.23     |     1009.34     |     24.01      |      49.29       |       16.82       |
 
 ![Entrenamiento vs k](graficas/tiempo_training_k_05seg.png)
+
+### Tiempos de entrenamiento vs overlap (5 s, k=10)
+
+Tiempo de entrenamiento por arquitectura para Study 3 (duracion fija 5 s, k=10), usando datos de `resultados.json`.
+
+| Overlap | X-Vector (s) | ECAPA-TDNN (s) | Feedforward (s) | X-Vector (min) | ECAPA-TDNN (min) | Feedforward (min) |
+| :-----: | :----------: | :------------: | :-------------: | :------------: | :--------------: | :---------------: |
+|    0    |    373.98    |     890.76     |     260.23      |      6.23      |      14.85       |       4.34        |
+|  0.25   |    576.99    |    1144.54     |     407.29      |      9.62      |      19.08       |       6.79        |
+|   0.5   |    703.82    |    1831.66     |     579.74      |     11.73      |      30.53       |       9.66        |
+|  0.75   |   1155.77    |    3723.68     |     1027.12     |     19.26      |      62.06       |       17.12       |
+
+![Entrenamiento vs overlap](graficas/tiempo_training_overlap_05seg.png)
 
 ### Tiempos de inferencia por archivo (5 s, k=10, overlap=0.5)
 

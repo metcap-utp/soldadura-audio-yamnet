@@ -13,7 +13,7 @@ IMPORTANTE: Se usa StratifiedGroupKFold para garantizar que:
 Los audios se segmentan ON-THE-FLY según la duración especificada
 (--duration) - NO hay archivos segmentados en disco.
 
-Utiliza YAMNet como backbone para extraer embeddings de audio.
+Utiliza YAMNet como enfoque para extraer embeddings de audio.
 
 Uso:
     python entrenar_xvector.py --duration 5 --overlap 0.5 --k-folds 5
@@ -1305,7 +1305,7 @@ if __name__ == "__main__":
         "id": f"{int(SEGMENT_DURATION)}seg_{N_FOLDS}fold_overlap_{OVERLAP_RATIO}_{datetime.now().strftime('%Y%m%d_%H%M%S')}",
         "timestamp": datetime.now().isoformat(),
         "model_type": "xvector",
-        "backbone": "yamnet",  # Identificar el backbone
+        "approach": "yamnet",  # Identificar el enfoque
         "execution_time": {
             "seconds": round(elapsed_time, 2),
             "minutes": round(elapsed_minutes, 2),

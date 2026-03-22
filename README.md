@@ -4,10 +4,10 @@ Este proyecto utiliza **YAMNet** como approach para extraer embeddings de audio 
 
 ## Diferencias con VGGish Approach
 
-| Característica | VGGish | YAMNet |
-|---------------|--------|--------|
-| Dimensión embeddings | 128 | 1024 |
-| URL modelo | tfhub.dev/google/vggish/1 | tfhub.dev/google/yamnet/1 |
+| Característica       | VGGish                    | YAMNet                    |
+| -------------------- | ------------------------- | ------------------------- |
+| Dimensión embeddings | 128                       | 1024                      |
+| URL modelo           | tfhub.dev/google/vggish/1 | tfhub.dev/google/yamnet/1 |
 
 ## Estructura del Proyecto
 

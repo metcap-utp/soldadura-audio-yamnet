@@ -9,8 +9,9 @@ Proporciona funciones para:
 """
 
 import platform
-import torch
 from datetime import datetime
+
+import torch
 
 
 def get_system_info(device):
@@ -24,15 +25,17 @@ def get_system_info(device):
     }
     try:
         import numpy as np
+
         info["numpy_version"] = np.__version__
     except Exception:
         pass
     try:
         import tensorflow as tf
+
         info["tensorflow_version"] = tf.__version__
     except Exception:
         pass
-    if hasattr(device, 'type') and device.type == "cuda":
+    if hasattr(device, "type") and device.type == "cuda":
         info["gpu_name"] = torch.cuda.get_device_name(0)
         info["gpu_memory_gb"] = round(
             torch.cuda.get_device_properties(0).total_memory / 1e9, 2
@@ -49,10 +52,10 @@ def count_model_parameters(model):
 
 def format_timing(elapsed_time):
     """Formatea tiempo de ejecución en múltiples unidades.
-    
+
     Args:
         elapsed_time: Tiempo en segundos
-        
+
     Returns:
         Diccionario con segundos, minutos y horas redondeados
     """
@@ -84,7 +87,7 @@ def create_result_entry(
     training_time,
 ):
     """Crea entrada de resultado con esquema canónico.
-    
+
     Args:
         segment_duration: Duración de segmento en segundos
         n_folds: Número de folds
@@ -104,7 +107,7 @@ def create_result_entry(
         training_history: Historia de entrenamiento
         execution_time: Tiempo total de ejecución
         training_time: Tiempo acumulado de entrenamiento
-        
+
     Returns:
         Diccionario con entrada formateada
     """

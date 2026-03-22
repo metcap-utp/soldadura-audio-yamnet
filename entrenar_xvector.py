@@ -61,9 +61,9 @@ from utils.audio_utils import (
     PROJECT_ROOT,
     load_audio_segment,
 )
-from utils.timing import timer
+from utils.checkpoint import TrainingCheckpoint, pause_requested, setup_pause_handler
 from utils.logging_utils import setup_log_file
-from utils.checkpoint import TrainingCheckpoint, setup_pause_handler, pause_requested
+from utils.timing import timer
 
 warnings.filterwarnings("ignore")
 
@@ -326,7 +326,7 @@ def extract_yamnet_embeddings_from_segment(
             embedding = np.array(result[1])
         else:
             embedding = result.numpy()
-        
+
         embeddings_list.append(embedding[0])
 
         if end >= len(segment):
@@ -362,7 +362,7 @@ def extract_yamnet_embeddings(audio_path):
             embedding = np.array(result[1])
         else:
             embedding = result.numpy()
-        
+
         embeddings_list.append(embedding[0])
 
         if end >= len(y):
@@ -504,7 +504,7 @@ def train_one_fold(
         "f1_current": 0.0,
     }
     best_state_dict = {k: v.cpu().clone() for k, v in model.state_dict().items()}
-    
+
     # Historial de entrenamiento por época
     training_history = []
 
@@ -587,19 +587,21 @@ def train_one_fold(
             all_labels["electrode"], all_preds["electrode"], average="macro"
         )
         f1_c = f1_score(all_labels["current"], all_preds["current"], average="macro")
-        
+
         # Guardar historial de esta época
-        training_history.append({
-            "epoch": epoch + 1,
-            "train_loss": train_loss / len(train_loader),
-            "val_loss": avg_val_loss,
-            "val_acc_plate": acc_p,
-            "val_acc_electrode": acc_e,
-            "val_acc_current": acc_c,
-            "val_f1_plate": f1_p,
-            "val_f1_electrode": f1_e,
-            "val_f1_current": f1_c
-        })
+        training_history.append(
+            {
+                "epoch": epoch + 1,
+                "train_loss": train_loss / len(train_loader),
+                "val_loss": avg_val_loss,
+                "val_acc_plate": acc_p,
+                "val_acc_electrode": acc_e,
+                "val_acc_current": acc_c,
+                "val_f1_plate": f1_p,
+                "val_f1_electrode": f1_e,
+                "val_f1_current": f1_c,
+            }
+        )
 
         # SWA update
         if epoch >= SWA_START:
@@ -638,28 +640,29 @@ def train_one_fold(
     # Recargar el mejor modelo para evaluarlo en el validation set completo
     model.load_state_dict(best_state_dict)
     model.eval()
-    
+
     val_preds = {"plate": [], "electrode": [], "current": []}
     val_labels_all = {"plate": [], "electrode": [], "current": []}
-    
+
     with torch.no_grad():
         for embeddings, labels_p, labels_e, labels_c in val_loader:
             embeddings = embeddings.to(device)
             outputs = model(embeddings)
-            
+
             _, pred_p = outputs["plate"].max(1)
             _, pred_e = outputs["electrode"].max(1)
             _, pred_c = outputs["current"].max(1)
-            
+
             val_preds["plate"].extend(pred_p.cpu().numpy())
             val_preds["electrode"].extend(pred_e.cpu().numpy())
             val_preds["current"].extend(pred_c.cpu().numpy())
             val_labels_all["plate"].extend(labels_p.numpy())
             val_labels_all["electrode"].extend(labels_e.numpy())
             val_labels_all["current"].extend(labels_c.numpy())
-    
+
     # Calcular matrices de confusión
     from sklearn.metrics import confusion_matrix
+
     cm_plate = confusion_matrix(val_labels_all["plate"], val_preds["plate"])
     cm_electrode = confusion_matrix(val_labels_all["electrode"], val_preds["electrode"])
     cm_current = confusion_matrix(val_labels_all["current"], val_preds["current"])
@@ -671,7 +674,7 @@ def train_one_fold(
         f"Best epoch={best_epoch} | "
         f"Guardado: {model_path.name}"
     )
-    
+
     # Agregar matrices de confusión a las métricas
     best_metrics["confusion_matrix_plate"] = cm_plate.tolist()
     best_metrics["confusion_matrix_electrode"] = cm_electrode.tolist()
@@ -889,7 +892,7 @@ if __name__ == "__main__":
 
     # Iniciar timer de entrenamiento puro (sin extracción YAMNet)
     training_start_time = time.time()
-    
+
     # Store the boundary between train and test data for k=1 case
     n_train_rows = len(train_data)
 
@@ -989,21 +992,25 @@ if __name__ == "__main__":
                 MODELS_DIR,
             )
         fold_time = time.time() - fold_start_time
-        
+
         # Agregar tiempo al dict de métricas del fold
         metrics["time_seconds"] = round(fold_time, 2)
         metrics["fold"] = fold_idx
-        
+
         fold_metrics.append(metrics)
         fold_best_epochs.append(best_epoch)
         fold_training_times.append(round(fold_time, 2))
-        
+
         # Guardar historial de este fold
         all_fold_histories.append(fold_history)
-        ckpt.save_fold(ckpt_state, fold_idx, metrics, fold_time, best_epoch, fold_history)
+        ckpt.save_fold(
+            ckpt_state, fold_idx, metrics, fold_time, best_epoch, fold_history
+        )
         if pause_requested():
             ckpt.mark_paused(ckpt_state)
-            print(f"[PAUSE] Pausado después del fold {fold_idx + 1}/{N_FOLDS}. Re-ejecuta el mismo comando para continuar.")
+            print(
+                f"[PAUSE] Pausado después del fold {fold_idx + 1}/{N_FOLDS}. Re-ejecuta el mismo comando para continuar."
+            )
             sys.exit(0)
 
     # Tiempo de entrenamiento = suma de tiempos de folds (excluye tiempo pausado)
@@ -1081,9 +1088,7 @@ if __name__ == "__main__":
     f1_e = f1_score(all_labels["electrode"], all_preds["electrode"], average="macro")
     f1_c = f1_score(all_labels["current"], all_preds["current"], average="macro")
 
-    prec_p = precision_score(
-        all_labels["plate"], all_preds["plate"], average="macro"
-    )
+    prec_p = precision_score(all_labels["plate"], all_preds["plate"], average="macro")
     prec_e = precision_score(
         all_labels["electrode"], all_preds["electrode"], average="macro"
     )
@@ -1095,9 +1100,7 @@ if __name__ == "__main__":
     rec_e = recall_score(
         all_labels["electrode"], all_preds["electrode"], average="macro"
     )
-    rec_c = recall_score(
-        all_labels["current"], all_preds["current"], average="macro"
-    )
+    rec_c = recall_score(all_labels["current"], all_preds["current"], average="macro")
 
     # Promedios K-Fold individuales
     avg_acc_p = np.mean([m["accuracy_plate"] for m in fold_metrics])
@@ -1179,44 +1182,46 @@ if __name__ == "__main__":
     print(confusion_matrix(all_labels["current"], all_preds["current"]))
     print(f"Clases: {current_type_encoder.classes_}")
 
-
     # ============= FASE 3: Evaluar en Blind Set =============
     print(f"\n{'=' * 70}")
     print("FASE 3: EVALUACIÓN EN BLIND SET")
     print(f"{'=' * 70}")
-    
+
     blind_csv = DURATION_DIR / f"blind_overlap_{OVERLAP_RATIO}.csv"
     if not blind_csv.exists():
         blind_csv = DURATION_DIR / "blind.csv"
-    
+
     if blind_csv.exists():
         print(f"Cargando blind set desde: {blind_csv}")
         blind_df = pd.read_csv(blind_csv)
-        
+
         # Extraer embeddings del blind set
         blind_embeddings = []
         for idx, row in blind_df.iterrows():
             if idx % 100 == 0:
                 print(f"  Procesando blind {idx}/{len(blind_df)}...")
             emb = extract_yamnet_embeddings_from_segment(
-                row['Audio Path'], 
-                int(row['Segment Index']), 
-                SEGMENT_DURATION, 
-                OVERLAP_SECONDS
+                row["Audio Path"],
+                int(row["Segment Index"]),
+                SEGMENT_DURATION,
+                OVERLAP_SECONDS,
             )
             blind_embeddings.append(emb)
-        
+
         # Predecir con el ensemble
         blind_dataset = AudioDataset(
             blind_embeddings,
             [0] * len(blind_embeddings),
             [0] * len(blind_embeddings),
-            [0] * len(blind_embeddings)
+            [0] * len(blind_embeddings),
         )
         blind_loader = DataLoader(
-            blind_dataset, batch_size=BATCH_SIZE, shuffle=False, collate_fn=collate_fn_pad
+            blind_dataset,
+            batch_size=BATCH_SIZE,
+            shuffle=False,
+            collate_fn=collate_fn_pad,
         )
-        
+
         blind_preds = {"plate": [], "electrode": [], "current": []}
         with torch.no_grad():
             for embeddings, _, _, _ in blind_loader:
@@ -1224,60 +1229,65 @@ if __name__ == "__main__":
                 blind_preds["plate"].extend(pred_p.cpu().numpy())
                 blind_preds["electrode"].extend(pred_e.cpu().numpy())
                 blind_preds["current"].extend(pred_c.cpu().numpy())
-        
+
         # Decodificar predicciones
         y_true_plate = blind_df["Plate Thickness"].values
         y_true_electrode = blind_df["Electrode"].values
         y_true_current = blind_df["Type of Current"].values
-        
+
         y_pred_plate = plate_encoder.inverse_transform(blind_preds["plate"])
         y_pred_electrode = electrode_encoder.inverse_transform(blind_preds["electrode"])
         y_pred_current = current_type_encoder.inverse_transform(blind_preds["current"])
-        
+
         # Calcular métricas blind
         from sklearn.metrics import accuracy_score, f1_score
-        
+
         blind_acc_plate = accuracy_score(y_true_plate, y_pred_plate)
         blind_acc_electrode = accuracy_score(y_true_electrode, y_pred_electrode)
         blind_acc_current = accuracy_score(y_true_current, y_pred_current)
-        
-        blind_f1_plate = f1_score(y_true_plate, y_pred_plate, average='weighted')
-        blind_f1_electrode = f1_score(y_true_electrode, y_pred_electrode, average='weighted')
-        blind_f1_current = f1_score(y_true_current, y_pred_current, average='weighted')
-        
+
+        blind_f1_plate = f1_score(y_true_plate, y_pred_plate, average="weighted")
+        blind_f1_electrode = f1_score(
+            y_true_electrode, y_pred_electrode, average="weighted"
+        )
+        blind_f1_current = f1_score(y_true_current, y_pred_current, average="weighted")
+
         # Exact match accuracy
         n_blind = len(y_true_plate)
         exact_matches = sum(
-            1 for i in range(n_blind)
+            1
+            for i in range(n_blind)
             if y_pred_plate[i] == y_true_plate[i]
             and y_pred_electrode[i] == y_true_electrode[i]
             and y_pred_current[i] == y_true_current[i]
         )
         exact_match_acc = exact_matches / n_blind
         hamming_acc = (blind_acc_plate + blind_acc_electrode + blind_acc_current) / 3
-        
+
         blind_evaluation = {
             "plate": {
                 "accuracy": round(blind_acc_plate, 4),
-                "f1": round(blind_f1_plate, 4)
+                "f1": round(blind_f1_plate, 4),
             },
             "electrode": {
                 "accuracy": round(blind_acc_electrode, 4),
-                "f1": round(blind_f1_electrode, 4)
+                "f1": round(blind_f1_electrode, 4),
             },
             "current": {
                 "accuracy": round(blind_acc_current, 4),
-                "f1": round(blind_f1_current, 4)
+                "f1": round(blind_f1_current, 4),
             },
             "global": {
                 "exact_match": round(exact_match_acc, 4),
-                "hamming_accuracy": round(hamming_acc, 4)
-            }
+                "hamming_accuracy": round(hamming_acc, 4),
+            },
         }
-        
+
         print(f"\nBlind Evaluation:")
         print(f"  Plate: Acc={blind_acc_plate:.4f}, F1={blind_f1_plate:.4f}")
-        print(f"  Electrode: Acc={blind_acc_electrode:.4f}, F1={blind_f1_electrode:.4f}")
+        print(
+            f"  Electrode: Acc={blind_acc_electrode:.4f}, F1={blind_f1_electrode:.4f}"
+        )
         print(f"  Current: Acc={blind_acc_current:.4f}, F1={blind_f1_current:.4f}")
         print(f"  Exact Match: {exact_match_acc:.4f}")
     else:
@@ -1413,6 +1423,6 @@ if __name__ == "__main__":
     print(f"\nResultados guardados en: {results_path} (entrada #{len(history)})")
     print(f"Modelos guardados en: {MODELS_DIR}/")
     print(f"Logs guardados en: {log_path}")
-    
+
     # Close log file
     log_file.close()

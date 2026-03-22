@@ -88,15 +88,15 @@ Las siguientes gráficas muestran el rendimiento de evaluación sobre el conjunt
 
 ### Accuracy por duración
 
-![Accuracy por duración](graficas/accuracy_vs_duracion.png)
+![Accuracy por duración](./graficas/accuracy_vs_duracion.png)
 
 ### F1-score por duración
 
-![F1-score por duración](graficas/f1_vs_duracion.png)
+![F1-score por duración](./graficas/f1_vs_duracion.png)
 
 ### Métricas globales (Exact Match y Hamming Accuracy)
 
-![Métricas globales](graficas/metricas_globales.png)
+![Métricas globales](./graficas/metricas_globales.png)
 
 ---
 
@@ -114,7 +114,7 @@ Tiempo de extracción total y por archivo según duración del segmento:
 |   30 s   |      306.41      |    918    |   333.78   |
 |   50 s   |      235.38      |    448    |   525.40   |
 
-![Extracción por duración](graficas/tiempo_extraction_duracion.png)
+![Extracción por duración](./graficas/tiempo_extraction_duracion.png)
 
 ### Tiempos de entrenamiento por duración
 
@@ -130,7 +130,7 @@ Tiempo de entrenamiento (k=10, overlap=0.5) por arquitectura según duración de
 |   30 s   |    286.3     |     420.6      |      190.8      |      4.77      |       7.01       |       3.18        |
 |   50 s   |    167.1     |     320.5      |      125.7      |      2.79      |       5.34       |       2.10        |
 
-![Entrenamiento por duración](graficas/tiempo_training_duracion.png)
+![Entrenamiento por duración](./graficas/tiempo_training_duracion.png)
 
 ### Tiempos de entrenamiento vs k (5 s, overlap=0.5)
 
@@ -146,7 +146,7 @@ Tiempo de entrenamiento por arquitectura para Study 2 (duración fija 5 s), usan
 | 15  |   1263.97    |    2447.68     |     813.30      |     21.07      |      40.79       |       13.55       |
 | 20  |   1440.59    |    2957.23     |     1009.34     |     24.01      |      49.29       |       16.82       |
 
-![Entrenamiento vs k](graficas/tiempo_training_k_05seg.png)
+![Entrenamiento vs k](./graficas/tiempo_training_k_05seg.png)
 
 ### Tiempos de entrenamiento vs overlap (5 s, k=10)
 
@@ -159,7 +159,7 @@ Tiempo de entrenamiento por arquitectura para Study 3 (duracion fija 5 s, k=10),
 |   0.5   |    703.82    |    1831.66     |     579.74      |     11.73      |      30.53       |       9.66        |
 |  0.75   |   1155.77    |    3723.68     |     1027.12     |     19.26      |      62.06       |       17.12       |
 
-![Entrenamiento vs overlap](graficas/tiempo_training_overlap_05seg.png)
+![Entrenamiento vs overlap](./graficas/tiempo_training_overlap_05seg.png)
 
 ### Tiempos de inferencia por archivo (5 s, k=10, overlap=0.5)
 
@@ -171,4 +171,4 @@ Tiempo de inferencia sobre el conjunto ciego en segmentos de 5 s:
 | ECAPA-TDNN   |      95.86       |   0.101   |   100.80   |
 | Feedforward  |      77.36       |   0.081   |   81.35    |
 
-![Inferencia por archivo](graficas/tiempo_inferencia_archivo_05seg.png)
+![Inferencia por archivo](./graficas/tiempo_inferencia_archivo_05seg.png)

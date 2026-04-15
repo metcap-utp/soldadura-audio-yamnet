@@ -41,7 +41,7 @@ dmypy.json
 .pytest_cache/
 .coverage
 htmlcov/
-videos-soldadura/
+videos_soldadura/
 
 # Modelos entrenados
 *.keras
@@ -79,3 +79,5 @@ Thumbs.db
 # Carpeta de backups de migración
 backups/
 *.aux
+
+AGENTS.md

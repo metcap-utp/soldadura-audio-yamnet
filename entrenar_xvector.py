@@ -787,14 +787,14 @@ if __name__ == "__main__":
     with timer("Cargar CSVs (train/test)"):
         # Intentar CSVs con nombre específico de overlap, fallback a genéricos
         train_csv = DURATION_DIR / f"train_overlap_{OVERLAP_RATIO}.csv"
-        test_csv = DURATION_DIR / f"test_overlap_{OVERLAP_RATIO}.csv"
+        val_csv = DURATION_DIR / f"validation_overlap_{OVERLAP_RATIO}.csv"
         if not train_csv.exists():
             train_csv = DURATION_DIR / "train.csv"
-        if not test_csv.exists():
-            test_csv = DURATION_DIR / "test.csv"
+        if not val_csv.exists():
+            val_csv = DURATION_DIR / "validation.csv"
         train_data = pd.read_csv(train_csv)
-        test_data = pd.read_csv(test_csv)
-        all_data = pd.concat([train_data, test_data], ignore_index=True)
+        val_data = pd.read_csv(val_csv)
+        all_data = pd.concat([train_data, val_data], ignore_index=True)
 
     print(f"\nTotal de segmentos: {len(all_data)}")
 
@@ -937,12 +937,12 @@ if __name__ == "__main__":
             continue
         # Verificar que sesiones no se mezclan
         train_sessions = set(sessions[train_idx])
-        val_sessions = set(sessions[val_idx])
-        assert len(train_sessions & val_sessions) == 0, "ERROR: Sesiones mezcladas!"
+        val_sessions_v = set(sessions[val_idx])
+        assert len(train_sessions & val_sessions_v) == 0, "ERROR: Sesiones mezcladas!"
 
         print(f"\nFold {fold_idx + 1}/{N_FOLDS}")
         print(f"  Train: {len(train_idx)} segmentos ({len(train_sessions)} sesiones)")
-        print(f"  Val: {len(val_idx)} segmentos ({len(val_sessions)} sesiones)")
+        print(f"  Val: {len(val_idx)} segmentos ({len(val_sessions_v)} sesiones)")
 
         # Separar datos
         train_embeddings = [all_embeddings[i] for i in train_idx]
@@ -1182,100 +1182,100 @@ if __name__ == "__main__":
     print(confusion_matrix(all_labels["current"], all_preds["current"]))
     print(f"Clases: {current_type_encoder.classes_}")
 
-    # ============= FASE 3: Evaluar en Blind Set =============
+    # ============= FASE 3: Evaluar en Test Set =============
     print(f"\n{'=' * 70}")
     print("FASE 3: EVALUACIÓN EN BLIND SET")
     print(f"{'=' * 70}")
 
-    blind_csv = DURATION_DIR / f"blind_overlap_{OVERLAP_RATIO}.csv"
-    if not blind_csv.exists():
-        blind_csv = DURATION_DIR / "blind.csv"
+    test_csv = DURATION_DIR / f"test_overlap_{OVERLAP_RATIO}.csv"
+    if not test_csv.exists():
+        test_csv = DURATION_DIR / "test.csv"
 
-    if blind_csv.exists():
-        print(f"Cargando blind set desde: {blind_csv}")
-        blind_df = pd.read_csv(blind_csv)
+    if test_csv.exists():
+        print(f"Cargando test set desde: {test_csv}")
+        test_df = pd.read_csv(test_csv)
 
-        # Extraer embeddings del blind set
-        blind_embeddings = []
-        for idx, row in blind_df.iterrows():
+        # Extraer embeddings del test set
+        test_embeddings = []
+        for idx, row in test_df.iterrows():
             if idx % 100 == 0:
-                print(f"  Procesando blind {idx}/{len(blind_df)}...")
+                print(f"  Procesando test {idx}/{len(test_df)}...")
             emb = extract_yamnet_embeddings_from_segment(
                 row["Audio Path"],
                 int(row["Segment Index"]),
                 SEGMENT_DURATION,
                 OVERLAP_SECONDS,
             )
-            blind_embeddings.append(emb)
+            test_embeddings.append(emb)
 
         # Predecir con el ensemble
-        blind_dataset = AudioDataset(
-            blind_embeddings,
-            [0] * len(blind_embeddings),
-            [0] * len(blind_embeddings),
-            [0] * len(blind_embeddings),
+        test_dataset = AudioDataset(
+            test_embeddings,
+            [0] * len(test_embeddings),
+            [0] * len(test_embeddings),
+            [0] * len(test_embeddings),
         )
-        blind_loader = DataLoader(
-            blind_dataset,
+        test_loader = DataLoader(
+            test_dataset,
             batch_size=BATCH_SIZE,
             shuffle=False,
             collate_fn=collate_fn_pad,
         )
 
-        blind_preds = {"plate": [], "electrode": [], "current": []}
+        test_preds = {"plate": [], "electrode": [], "current": []}
         with torch.no_grad():
-            for embeddings, _, _, _ in blind_loader:
+            for embeddings, _, _, _ in test_loader:
                 pred_p, pred_e, pred_c = ensemble_predict(models, embeddings, device)
-                blind_preds["plate"].extend(pred_p.cpu().numpy())
-                blind_preds["electrode"].extend(pred_e.cpu().numpy())
-                blind_preds["current"].extend(pred_c.cpu().numpy())
+                test_preds["plate"].extend(pred_p.cpu().numpy())
+                test_preds["electrode"].extend(pred_e.cpu().numpy())
+                test_preds["current"].extend(pred_c.cpu().numpy())
 
         # Decodificar predicciones
-        y_true_plate = blind_df["Plate Thickness"].values
-        y_true_electrode = blind_df["Electrode"].values
-        y_true_current = blind_df["Type of Current"].values
+        y_true_plate = test_df["Plate Thickness"].values
+        y_true_electrode = test_df["Electrode"].values
+        y_true_current = test_df["Type of Current"].values
 
-        y_pred_plate = plate_encoder.inverse_transform(blind_preds["plate"])
-        y_pred_electrode = electrode_encoder.inverse_transform(blind_preds["electrode"])
-        y_pred_current = current_type_encoder.inverse_transform(blind_preds["current"])
+        y_pred_plate = plate_encoder.inverse_transform(test_preds["plate"])
+        y_pred_electrode = electrode_encoder.inverse_transform(test_preds["electrode"])
+        y_pred_current = current_type_encoder.inverse_transform(test_preds["current"])
 
-        # Calcular métricas blind
+        # Calcular métricas test
         from sklearn.metrics import accuracy_score, f1_score
 
-        blind_acc_plate = accuracy_score(y_true_plate, y_pred_plate)
-        blind_acc_electrode = accuracy_score(y_true_electrode, y_pred_electrode)
-        blind_acc_current = accuracy_score(y_true_current, y_pred_current)
+        test_acc_plate = accuracy_score(y_true_plate, y_pred_plate)
+        test_acc_electrode = accuracy_score(y_true_electrode, y_pred_electrode)
+        test_acc_current = accuracy_score(y_true_current, y_pred_current)
 
-        blind_f1_plate = f1_score(y_true_plate, y_pred_plate, average="weighted")
-        blind_f1_electrode = f1_score(
+        test_f1_plate = f1_score(y_true_plate, y_pred_plate, average="weighted")
+        test_f1_electrode = f1_score(
             y_true_electrode, y_pred_electrode, average="weighted"
         )
-        blind_f1_current = f1_score(y_true_current, y_pred_current, average="weighted")
+        test_f1_current = f1_score(y_true_current, y_pred_current, average="weighted")
 
         # Exact match accuracy
-        n_blind = len(y_true_plate)
+        n_test = len(y_true_plate)
         exact_matches = sum(
             1
-            for i in range(n_blind)
+            for i in range(n_test)
             if y_pred_plate[i] == y_true_plate[i]
             and y_pred_electrode[i] == y_true_electrode[i]
             and y_pred_current[i] == y_true_current[i]
         )
-        exact_match_acc = exact_matches / n_blind
-        hamming_acc = (blind_acc_plate + blind_acc_electrode + blind_acc_current) / 3
+        exact_match_acc = exact_matches / n_test
+        hamming_acc = (test_acc_plate + test_acc_electrode + test_acc_current) / 3
 
-        blind_evaluation = {
+        test_evaluation = {
             "plate": {
-                "accuracy": round(blind_acc_plate, 4),
-                "f1": round(blind_f1_plate, 4),
+                "accuracy": round(test_acc_plate, 4),
+                "f1": round(test_f1_plate, 4),
             },
             "electrode": {
-                "accuracy": round(blind_acc_electrode, 4),
-                "f1": round(blind_f1_electrode, 4),
+                "accuracy": round(test_acc_electrode, 4),
+                "f1": round(test_f1_electrode, 4),
             },
             "current": {
-                "accuracy": round(blind_acc_current, 4),
-                "f1": round(blind_f1_current, 4),
+                "accuracy": round(test_acc_current, 4),
+                "f1": round(test_f1_current, 4),
             },
             "global": {
                 "exact_match": round(exact_match_acc, 4),
@@ -1283,16 +1283,16 @@ if __name__ == "__main__":
             },
         }
 
-        print(f"\nBlind Evaluation:")
-        print(f"  Plate: Acc={blind_acc_plate:.4f}, F1={blind_f1_plate:.4f}")
+        print(f"\nTest Evaluation:")
+        print(f"  Plate: Acc={test_acc_plate:.4f}, F1={test_f1_plate:.4f}")
         print(
-            f"  Electrode: Acc={blind_acc_electrode:.4f}, F1={blind_f1_electrode:.4f}"
+            f"  Electrode: Acc={test_acc_electrode:.4f}, F1={test_f1_electrode:.4f}"
         )
-        print(f"  Current: Acc={blind_acc_current:.4f}, F1={blind_f1_current:.4f}")
+        print(f"  Current: Acc={test_acc_current:.4f}, F1={test_f1_current:.4f}")
         print(f"  Exact Match: {exact_match_acc:.4f}")
     else:
-        print(f"No se encontró blind set en {blind_csv}")
-        blind_evaluation = None
+        print(f"No se encontró test set en {test_csv}")
+        test_evaluation = None
 
     # Guardar resultados (acumulativo)
     end_time = time.time()

@@ -4,7 +4,7 @@
 
 **Configuración:**
 - Duración de segmento: 10.0s
-- Número de muestras (blind): 447
+- Número de muestras (test): 447
 - Número de modelos (ensemble): 10
 - Método de votación: soft
 
@@ -94,6 +94,6 @@
 
 ## Notas
 
-- Las métricas se calcularon sobre el conjunto **blind** (datos nunca vistos durante entrenamiento).
+- Las métricas se calcularon sobre el conjunto **test** (datos nunca vistos durante entrenamiento).
 - El ensemble usa **Soft Voting**: promedia logits de todos los modelos antes de aplicar argmax.
 - Los modelos fueron entrenados con **StratifiedGroupKFold** para evitar data leakage por sesión.

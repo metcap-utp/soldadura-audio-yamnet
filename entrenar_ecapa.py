@@ -39,9 +39,9 @@ from torch.utils.data import DataLoader, Dataset
 sys.path.insert(0, str(Path(__file__).parent))
 from models.modelo_ecapa import ECAPAMultiTask
 from utils.audio_utils import PROJECT_ROOT, load_audio_segment
-from utils.timing import timer
+from utils.checkpoint import TrainingCheckpoint, pause_requested, setup_pause_handler
 from utils.logging_utils import setup_log_file
-from utils.checkpoint import TrainingCheckpoint, setup_pause_handler, pause_requested
+from utils.timing import timer
 
 warnings.filterwarnings("ignore")
 
@@ -372,17 +372,19 @@ def train_one_fold(
         )
         f1_c = f1_score(all_labels["current"], all_preds["current"], average="macro")
 
-        training_history.append({
-            "epoch": epoch + 1,
-            "train_loss": train_loss / len(train_loader),
-            "val_loss": avg_val_loss,
-            "val_acc_plate": acc_p,
-            "val_acc_electrode": acc_e,
-            "val_acc_current": acc_c,
-            "val_f1_plate": f1_p,
-            "val_f1_electrode": f1_e,
-            "val_f1_current": f1_c,
-        })
+        training_history.append(
+            {
+                "epoch": epoch + 1,
+                "train_loss": train_loss / len(train_loader),
+                "val_loss": avg_val_loss,
+                "val_acc_plate": acc_p,
+                "val_acc_electrode": acc_e,
+                "val_acc_current": acc_c,
+                "val_f1_plate": f1_p,
+                "val_f1_electrode": f1_e,
+                "val_f1_current": f1_c,
+            }
+        )
 
         # Early stopping y guardar mejor modelo
         if avg_val_loss < best_val_loss:
@@ -689,14 +691,14 @@ def main():
     # Cargar CSVs
     with timer("Cargar CSVs (train/test)"):
         train_csv = DURATION_DIR / f"train_overlap_{OVERLAP_RATIO}.csv"
-        test_csv = DURATION_DIR / f"test_overlap_{OVERLAP_RATIO}.csv"
+        val_csv = DURATION_DIR / f"validation_overlap_{OVERLAP_RATIO}.csv"
         if not train_csv.exists():
             train_csv = DURATION_DIR / "train.csv"
-        if not test_csv.exists():
-            test_csv = DURATION_DIR / "test.csv"
+        if not val_csv.exists():
+            val_csv = DURATION_DIR / "validation.csv"
         train_data = pd.read_csv(train_csv)
-        test_data = pd.read_csv(test_csv)
-        all_data = pd.concat([train_data, test_data], ignore_index=True)
+        val_data = pd.read_csv(val_csv)
+        all_data = pd.concat([train_data, val_data], ignore_index=True)
 
     print(f"\nTotal de segmentos: {len(all_data)}")
 
@@ -781,7 +783,7 @@ def main():
     print(f"{'=' * 70}")
 
     training_start_time = time.time()
-    
+
     # Store the boundary between train and test data for k=1 case
     n_train_rows = len(train_data)
 
@@ -825,12 +827,12 @@ def main():
         if fold_idx < start_fold:
             continue
         train_sessions = set(sessions[train_idx])
-        val_sessions = set(sessions[val_idx])
-        assert len(train_sessions & val_sessions) == 0, "ERROR: Sesiones mezcladas!"
+        val_sessions_v = set(sessions[val_idx])
+        assert len(train_sessions & val_sessions_v) == 0, "ERROR: Sesiones mezcladas!"
 
         print(f"\nFold {fold_idx + 1}/{N_FOLDS}")
         print(f"  Train: {len(train_idx)} segmentos ({len(train_sessions)} sesiones)")
-        print(f"  Val: {len(val_idx)} segmentos ({len(val_sessions)} sesiones)")
+        print(f"  Val: {len(val_idx)} segmentos ({len(val_sessions_v)} sesiones)")
 
         train_embeddings = [all_embeddings[i] for i in train_idx]
         val_embeddings = [all_embeddings[i] for i in val_idx]
@@ -878,17 +880,21 @@ def main():
                 MODELS_DIR,
             )
         fold_time = time.time() - fold_start_time
-        
+
         metrics["time_seconds"] = round(fold_time, 2)
         metrics["fold"] = fold_idx
         fold_metrics.append(metrics)
         fold_best_epochs.append(best_epoch)
         fold_training_times.append(round(fold_time, 2))
         all_fold_histories.append(fold_history)
-        ckpt.save_fold(ckpt_state, fold_idx, metrics, fold_time, best_epoch, fold_history)
+        ckpt.save_fold(
+            ckpt_state, fold_idx, metrics, fold_time, best_epoch, fold_history
+        )
         if pause_requested():
             ckpt.mark_paused(ckpt_state)
-            print(f"[PAUSE] Pausado después del fold {fold_idx + 1}/{N_FOLDS}. Re-ejecuta el mismo comando para continuar.")
+            print(
+                f"[PAUSE] Pausado después del fold {fold_idx + 1}/{N_FOLDS}. Re-ejecuta el mismo comando para continuar."
+            )
             sys.exit(0)
 
     training_end_time = time.time()
@@ -925,7 +931,17 @@ def main():
                 num_classes_electrodo=len(electrode_encoder.classes_),
                 num_classes_corriente=len(current_type_encoder.classes_),
             ).to(device)
-            model.load_state_dict(torch.load(MODELS_DIR / f"model_fold_{fold_idx}.pth"))
+            try:
+                model.load_state_dict(
+                    torch.load(MODELS_DIR / f"model_fold_{fold_idx}.pth")
+                )
+            except RuntimeError as exc:
+                raise RuntimeError(
+                    "Se detectó un checkpoint ECAPA incompatible durante la carga del ensemble. "
+                    "Los pesos legacy (ResidualBlock) no son compatibles con la arquitectura canónica "
+                    "actual (TDNN + Res2Net + MFA). Reentrena los folds ECAPA con esta versión. "
+                    f"Detalle: {exc}"
+                ) from exc
             model.eval()
             models.append(model)
         print(f"Cargados {len(models)} modelos del ensemble")
@@ -962,9 +978,7 @@ def main():
     f1_e = f1_score(all_labels["electrode"], all_preds["electrode"], average="macro")
     f1_c = f1_score(all_labels["current"], all_preds["current"], average="macro")
 
-    prec_p = precision_score(
-        all_labels["plate"], all_preds["plate"], average="macro"
-    )
+    prec_p = precision_score(all_labels["plate"], all_preds["plate"], average="macro")
     prec_e = precision_score(
         all_labels["electrode"], all_preds["electrode"], average="macro"
     )
@@ -976,9 +990,7 @@ def main():
     rec_e = recall_score(
         all_labels["electrode"], all_preds["electrode"], average="macro"
     )
-    rec_c = recall_score(
-        all_labels["current"], all_preds["current"], average="macro"
-    )
+    rec_c = recall_score(all_labels["current"], all_preds["current"], average="macro")
 
     avg_acc_p = np.mean([m["accuracy_plate"] for m in fold_metrics])
     avg_acc_e = np.mean([m["accuracy_electrode"] for m in fold_metrics])
@@ -1186,7 +1198,7 @@ def main():
         f"\nTiempo de ejecución: {elapsed_time:.2f}s ({elapsed_minutes:.2f}min / {elapsed_hours:.4f}h)"
     )
     print(f"Logs guardados en: {log_path}")
-    
+
     # Close log file
     log_file.close()
 

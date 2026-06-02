@@ -1,16 +1,16 @@
 #!/usr/bin/env python3
 """
-Generador de splits para yamnet-backbone.
+Generador de splits para yamnet.
 
-Este script es un wrapper que utiliza generar_splits.py del proyecto vggish-backbone,
+Este script es un wrapper que utiliza generar_splits.py del proyecto vggish,
 ya que ambos proyectos utilizan los mismos archivos de audio.
 """
 
 import sys
 from pathlib import Path
 
-# Agregar vggish-backbone al path para importar su generar_splits
-vggish_path = Path(__file__).parent.parent / "vggish-backbone"
+# Agregar vggish al path para importar su generar_splits
+vggish_path = Path(__file__).parent.parent / "vggish"
 sys.path.insert(0, str(vggish_path))
 
 # Cambiar el directorio de trabajo por si acaso

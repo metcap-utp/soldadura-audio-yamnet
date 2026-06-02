@@ -668,14 +668,14 @@ def main():
     # Cargar CSVs
     with timer("Cargar CSVs (train/test)"):
         train_csv = DURATION_DIR / f"train_overlap_{OVERLAP_RATIO}.csv"
-        test_csv = DURATION_DIR / f"test_overlap_{OVERLAP_RATIO}.csv"
+        val_csv = DURATION_DIR / f"validation_overlap_{OVERLAP_RATIO}.csv"
         if not train_csv.exists():
             train_csv = DURATION_DIR / "train.csv"
-        if not test_csv.exists():
-            test_csv = DURATION_DIR / "test.csv"
+        if not val_csv.exists():
+            val_csv = DURATION_DIR / "validation.csv"
         train_data = pd.read_csv(train_csv)
-        test_data = pd.read_csv(test_csv)
-        all_data = pd.concat([train_data, test_data], ignore_index=True)
+        val_data = pd.read_csv(val_csv)
+        all_data = pd.concat([train_data, val_data], ignore_index=True)
 
     print(f"\nTotal de segmentos: {len(all_data)}")
 
@@ -805,12 +805,12 @@ def main():
         if fold_idx < start_fold:
             continue
         train_sessions = set(sessions[train_idx])
-        val_sessions = set(sessions[val_idx])
-        assert len(train_sessions & val_sessions) == 0, "ERROR: Sesiones mezcladas!"
+        val_sessions_v = set(sessions[val_idx])
+        assert len(train_sessions & val_sessions_v) == 0, "ERROR: Sesiones mezcladas!"
 
         print(f"\nFold {fold_idx + 1}/{N_FOLDS}")
         print(f"  Train: {len(train_idx)} segmentos ({len(train_sessions)} sesiones)")
-        print(f"  Val: {len(val_idx)} segmentos ({len(val_sessions)} sesiones)")
+        print(f"  Val: {len(val_idx)} segmentos ({len(val_sessions_v)} sesiones)")
 
         X_train = all_features[train_idx]
         X_val = all_features[val_idx]

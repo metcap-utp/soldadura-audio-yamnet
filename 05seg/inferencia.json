@@ -1648,5 +1648,323 @@
       "minutes": 1.29,
       "hours": 0.0215
     }
+  },
+  {
+    "model_type": "xvector",
+    "metrics": {
+      "plate": {
+        "accuracy": 0.7181913774973712,
+        "f1_macro": 0.7228626180443517
+      },
+      "electrode": {
+        "accuracy": 0.8096740273396424,
+        "f1_macro": 0.7889050252373541
+      },
+      "current": {
+        "accuracy": 0.9211356466876972,
+        "f1_macro": 0.9157712378705268
+      },
+      "global": {
+        "exact_match": 0.6519453207150369,
+        "hamming_accuracy": 0.8163336838415702
+      }
+    },
+    "confusion_matrices": {
+      "plate": [
+        [
+          206,
+          13,
+          56
+        ],
+        [
+          8,
+          228,
+          11
+        ],
+        [
+          87,
+          93,
+          249
+        ]
+      ],
+      "electrode": [
+        [
+          101,
+          9,
+          5,
+          3
+        ],
+        [
+          11,
+          285,
+          12,
+          2
+        ],
+        [
+          11,
+          13,
+          210,
+          7
+        ],
+        [
+          58,
+          13,
+          37,
+          174
+        ]
+      ],
+      "current": [
+        [
+          318,
+          12
+        ],
+        [
+          63,
+          558
+        ]
+      ]
+    },
+    "label_classes": {
+      "plate": [
+        "Placa_12mm",
+        "Placa_3mm",
+        "Placa_6mm"
+      ],
+      "electrode": [
+        "E6010",
+        "E6011",
+        "E6013",
+        "E7018"
+      ],
+      "current": [
+        "AC",
+        "DC"
+      ]
+    },
+    "timestamp": "2026-05-05T19:03:52.614728",
+    "config": {
+      "duration": 5,
+      "overlap": 0.5,
+      "k_folds": 10,
+      "n_models": 10,
+      "model_type": "xvector"
+    },
+    "execution_time": {
+      "seconds": 84.53,
+      "minutes": 1.41,
+      "hours": 0.0235
+    }
+  },
+  {
+    "model_type": "feedforward",
+    "metrics": {
+      "plate": {
+        "accuracy": 0.7087276550998949,
+        "f1_macro": 0.715616886393592
+      },
+      "electrode": {
+        "accuracy": 0.8117770767613038,
+        "f1_macro": 0.7904251268686926
+      },
+      "current": {
+        "accuracy": 0.9274447949526814,
+        "f1_macro": 0.9225969234108359
+      },
+      "global": {
+        "exact_match": 0.6445846477392219,
+        "hamming_accuracy": 0.8159831756046266
+      }
+    },
+    "confusion_matrices": {
+      "plate": [
+        [
+          199,
+          11,
+          65
+        ],
+        [
+          7,
+          226,
+          14
+        ],
+        [
+          109,
+          71,
+          249
+        ]
+      ],
+      "electrode": [
+        [
+          101,
+          11,
+          4,
+          2
+        ],
+        [
+          14,
+          288,
+          5,
+          3
+        ],
+        [
+          11,
+          13,
+          210,
+          7
+        ],
+        [
+          58,
+          18,
+          33,
+          173
+        ]
+      ],
+      "current": [
+        [
+          322,
+          8
+        ],
+        [
+          61,
+          560
+        ]
+      ]
+    },
+    "label_classes": {
+      "plate": [
+        "Placa_12mm",
+        "Placa_3mm",
+        "Placa_6mm"
+      ],
+      "electrode": [
+        "E6010",
+        "E6011",
+        "E6013",
+        "E7018"
+      ],
+      "current": [
+        "AC",
+        "DC"
+      ]
+    },
+    "timestamp": "2026-05-05T19:05:27.869704",
+    "config": {
+      "duration": 5,
+      "overlap": 0.5,
+      "k_folds": 10,
+      "n_models": 10,
+      "model_type": "feedforward"
+    },
+    "execution_time": {
+      "seconds": 80.62,
+      "minutes": 1.34,
+      "hours": 0.0224
+    }
+  },
+  {
+    "model_type": "ecapa",
+    "metrics": {
+      "plate": {
+        "accuracy": 0.676130389064143,
+        "f1_macro": 0.6818037732818198
+      },
+      "electrode": {
+        "accuracy": 0.8107255520504731,
+        "f1_macro": 0.7895558379624776
+      },
+      "current": {
+        "accuracy": 0.8727655099894848,
+        "f1_macro": 0.8679283396669486
+      },
+      "global": {
+        "exact_match": 0.6151419558359621,
+        "hamming_accuracy": 0.786540483701367
+      }
+    },
+    "confusion_matrices": {
+      "plate": [
+        [
+          194,
+          19,
+          62
+        ],
+        [
+          4,
+          227,
+          16
+        ],
+        [
+          117,
+          90,
+          222
+        ]
+      ],
+      "electrode": [
+        [
+          98,
+          14,
+          4,
+          2
+        ],
+        [
+          5,
+          298,
+          4,
+          3
+        ],
+        [
+          9,
+          18,
+          206,
+          8
+        ],
+        [
+          50,
+          18,
+          45,
+          169
+        ]
+      ],
+      "current": [
+        [
+          324,
+          6
+        ],
+        [
+          115,
+          506
+        ]
+      ]
+    },
+    "label_classes": {
+      "plate": [
+        "Placa_12mm",
+        "Placa_3mm",
+        "Placa_6mm"
+      ],
+      "electrode": [
+        "E6010",
+        "E6011",
+        "E6013",
+        "E7018"
+      ],
+      "current": [
+        "AC",
+        "DC"
+      ]
+    },
+    "timestamp": "2026-05-05T20:04:25.645547",
+    "config": {
+      "duration": 5,
+      "overlap": 0.5,
+      "k_folds": 10,
+      "n_models": 10,
+      "model_type": "ecapa"
+    },
+    "execution_time": {
+      "seconds": 102.81,
+      "minutes": 1.71,
+      "hours": 0.0286
+    }
   }
 ]

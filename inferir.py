@@ -14,7 +14,7 @@ Uso:
     python inferir.py --duration 5                    # Predicciones aleatorias (05seg, overlap 0.5)
     python inferir.py --duration 10 --overlap 0.0     # Sin solapamiento
     python inferir.py --duration 5 --k-folds 10       # Usa modelos de 10-fold
-    python inferir.py --duration 5 --evaluar           # Evalúa en conjunto blind
+    python inferir.py --duration 5 --evaluar           # Evalúa en conjunto test
     python inferir.py --duration 5 --audio ruta.wav    # Predice un archivo específico
     python inferir.py --duration 30 --train-duration 5 # Cross-duration: modelo 05seg, test 30seg
 """
@@ -85,7 +85,7 @@ def parse_args():
     parser.add_argument(
         "--evaluar",
         action="store_true",
-        help="Evaluar ensemble en conjunto blind (vida real)",
+        help="Evaluar ensemble en conjunto test (vida real)",
     )
     parser.add_argument(
         "--n",
@@ -284,7 +284,25 @@ def load_ensemble_models(
                 if old_name in k:
                     new_key = k.replace(old_name, new_name)
             mapped_keys[new_key] = v
-        model.load_state_dict(mapped_keys)
+        try:
+            model.load_state_dict(mapped_keys)
+        except RuntimeError as exc:
+            if model_type == "ecapa":
+                from models.modelo_ecapa_legacy import SMAWECAPAModelLegacy
+                model = SMAWECAPAModelLegacy(
+                    feat_dim=1024,
+                    ecapa_channels=1024,
+                    emb_dim=256,
+                    num_classes_espesor=len(plate_encoder.classes_),
+                    num_classes_electrodo=len(electrode_encoder.classes_),
+                    num_classes_corriente=len(current_type_encoder.classes_),
+                ).to(device)
+                model.load_state_dict(mapped_keys)
+                print(f"  [INFO] Cargado fold {fold} con arquitectura ECAPA legacy")
+            else:
+                raise RuntimeError(
+                    f"No se pudo cargar {model_path}. Detalle: {exc}"
+                ) from exc
         model.eval()
         models.append(model)
 
@@ -420,7 +438,7 @@ def generate_metrics_document(
 
 **Configuración:**
 - Duración de segmento: {segment_duration}s
-- Número de muestras (blind): {results["n_samples"]}
+- Número de muestras (test): {results["n_samples"]}
 - Número de modelos (ensemble): {results["n_models"]}
 - Método de votación: {results["voting_method"]}
 
@@ -504,7 +522,7 @@ def generate_metrics_document(
 
 ## Notas
 
-- Las métricas se calcularon sobre el conjunto **blind** (datos nunca vistos durante entrenamiento).
+- Las métricas se calcularon sobre el conjunto **test** (datos nunca vistos durante entrenamiento).
 - El ensemble usa **Soft Voting**: promedia logits de todos los modelos antes de aplicar argmax.
 - Los modelos fueron entrenados con **StratifiedGroupKFold** para evitar data leakage por sesión.
 """
@@ -523,36 +541,37 @@ def generate_metrics_document(
 # =============================================================================
 
 
-def evaluate_blind_set(
+def evaluate_test_set(
     ctx,
 ):
-    """Evalúa el ensemble en el conjunto blind (validación vida real)."""
+    """Evalúa el ensemble en el conjunto test (validación vida real)."""
     start_time = time.time()
 
-    # Intentar blind.csv con nombre específico de overlap, fallback a genérico
+    # Intentar test.csv con nombre específico de overlap, fallback a genérico
     overlap_ratio = ctx["overlap_ratio"]
-    blind_csv = ctx["test_dir"] / f"blind_overlap_{overlap_ratio}.csv"
-    if not blind_csv.exists():
-        blind_csv = ctx["test_dir"] / "blind.csv"
-    if not blind_csv.exists():
+    test_csv = ctx["test_dir"] / f"test_overlap_{overlap_ratio}.csv"
+    if not test_csv.exists():
+        test_csv = ctx["test_dir"] / "test.csv"
+    if not test_csv.exists():
         print(
-            f"No se encontró {blind_csv}. Ejecuta generar_splits.py --duration {ctx['test_seconds']} --overlap {overlap_ratio} primero."
+            f"No se encontró {test_csv}. Ejecuta generar_splits.py --duration {ctx['test_seconds']} --overlap {overlap_ratio} primero."
         )
         return None
 
-    with timer("Cargar blind.csv"):
-        blind_df = pd.read_csv(blind_csv)
-    print(f"\nEvaluando ensemble en {len(blind_df)} segmentos de BLIND (vida real)...")
+    with timer("Cargar test.csv"):
+        test_df = pd.read_csv(test_csv)
+    print(f"\nEvaluando ensemble en {len(test_df)} segmentos de BLIND (vida real)...")
     print(f"Duración de segmento (test): {ctx['segment_duration']}s")
 
     y_true_plate, y_pred_plate = [], []
     y_true_electrode, y_pred_electrode = [], []
     y_true_current, y_pred_current = [], []
+    audio_paths_seen, segment_indices_seen, sesiones_seen = [], [], []
 
     with timer("Inferencia BLIND (segmentos)"):
-        for idx, row in blind_df.iterrows():
+        for idx, row in test_df.iterrows():
             if idx % 100 == 0:
-                print(f"  Procesando {idx}/{len(blind_df)}...")
+                print(f"  Procesando {idx}/{len(test_df)}...")
 
             audio_path = row["Audio Path"]
             segment_idx = int(row["Segment Index"])
@@ -560,6 +579,9 @@ def evaluate_blind_set(
             y_true_plate.append(row["Plate Thickness"])
             y_true_electrode.append(row["Electrode"])
             y_true_current.append(row["Type of Current"])
+            audio_paths_seen.append(audio_path)
+            segment_indices_seen.append(segment_idx)
+            sesiones_seen.append(Path(audio_path).parent.name)
 
             embeddings = extract_yamnet_embeddings_from_segment(
                 ctx["yamnet_model"],
@@ -584,6 +606,29 @@ def evaluate_blind_set(
             y_pred_plate.append(result["plate"])
             y_pred_electrode.append(result["electrode"])
             y_pred_current.append(result["current"])
+
+    predictions_df = pd.DataFrame(
+        {
+            "audio_path": audio_paths_seen,
+            "sesion": sesiones_seen,
+            "segment_index": segment_indices_seen,
+            "placa": y_true_plate,
+            "electrodo": y_true_electrode,
+            "corriente": y_true_current,
+            "true_plate": y_true_plate,
+            "true_electrode": y_true_electrode,
+            "true_current": y_true_current,
+            "pred_plate": y_pred_plate,
+            "pred_electrode": y_pred_electrode,
+            "pred_current": y_pred_current,
+        }
+    )
+    pred_dir = ctx["test_dir"] / "predicciones"
+    pred_dir.mkdir(parents=True, exist_ok=True)
+    arch = ctx["config_dict"].get("model_type", "unknown")
+    pred_path = pred_dir / f"yamnet_{arch}_overlap_{overlap_ratio}.csv"
+    predictions_df.to_csv(pred_path, index=False)
+    print(f"  Predicciones por segmento guardadas en: {pred_path}")
 
     # Calcular métricas
     print("\n" + "=" * 70)
@@ -696,24 +741,24 @@ def evaluate_blind_set(
 
 
 def show_random_predictions(ctx, n_samples=10):
-    """Muestra predicciones aleatorias del conjunto blind."""
+    """Muestra predicciones aleatorias del conjunto test."""
     start_time = time.time()
 
-    # Intentar blind.csv con nombre específico de overlap, fallback a genérico
+    # Intentar test.csv con nombre específico de overlap, fallback a genérico
     overlap_ratio = ctx["overlap_ratio"]
-    blind_csv = ctx["test_dir"] / f"blind_overlap_{overlap_ratio}.csv"
-    if not blind_csv.exists():
-        blind_csv = ctx["test_dir"] / "blind.csv"
-    if not blind_csv.exists():
+    test_csv = ctx["test_dir"] / f"test_overlap_{overlap_ratio}.csv"
+    if not test_csv.exists():
+        test_csv = ctx["test_dir"] / "test.csv"
+    if not test_csv.exists():
         print(
-            f"No se encontró {blind_csv}. Ejecuta generar_splits.py --duration {ctx['test_seconds']} --overlap {overlap_ratio} primero."
+            f"No se encontró {test_csv}. Ejecuta generar_splits.py --duration {ctx['test_seconds']} --overlap {overlap_ratio} primero."
         )
         return
 
-    with timer("Cargar blind.csv"):
-        blind_df = pd.read_csv(blind_csv)
-    num_samples = min(n_samples, len(blind_df))
-    samples = blind_df.sample(n=num_samples, random_state=None)
+    with timer("Cargar test.csv"):
+        test_df = pd.read_csv(test_csv)
+    num_samples = min(n_samples, len(test_df))
+    samples = test_df.sample(n=num_samples, random_state=None)
 
     print(f"\n{'=' * 80}")
     print(f"  PREDICCIONES ALEATORIAS ({num_samples} muestras)")
@@ -1035,7 +1080,7 @@ def main():
         if args.audio:
             predict_single_audio(ctx, args.audio)
         elif args.evaluar:
-            evaluate_blind_set(ctx)
+            evaluate_test_set(ctx)
         else:
             show_random_predictions(ctx, n_samples=args.n)
     finally:

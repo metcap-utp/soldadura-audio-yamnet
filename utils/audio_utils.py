@@ -24,9 +24,9 @@ import librosa
 import numpy as np
 import pandas as pd
 
-# Ruta base del proyecto (apunta al directorio de audio de vggish-backbone para evitar duplicar archivos)
+# Ruta base del proyecto (apunta al directorio de audio de vggish para evitar duplicar archivos)
 YAMNET_ROOT = Path(__file__).parent.parent
-SIBLING_ROOT = YAMNET_ROOT.parent / "vggish-backbone"  # Directorio hermano con archivos de audio
+SIBLING_ROOT = YAMNET_ROOT.parent / "vggish"  # Directorio hermano con archivos de audio
 PROJECT_ROOT = SIBLING_ROOT  # Resolver paths de audio desde el proyecto hermano
 AUDIO_BASE_DIR = SIBLING_ROOT / "audio"
 
